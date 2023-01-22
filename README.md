@@ -8,11 +8,11 @@ Major difference between old Timekeeper will be that the Time Entries will be ke
 
 ## To Do
 
-- [ ] Set up Deno project
+- [x] Set up Deno project
 - [ ] Copy over main application logic from Timekeeper React version
 - [ ] Design the CLI interface
 - [ ] Implement the CLI interface
-- [ ] Save settings
+- [x] Save settings
 - [ ] Ask for identity / author
 - [ ] Ask for share address
 - [ ] Command for create share

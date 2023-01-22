@@ -34,8 +34,7 @@ const prompt = async () => {
 const listPaths = async () => {
     const allPaths = await replica.queryPaths();
 
-    console.group();
-    console.log('Existing paths:');
+    console.group('listPaths');
 
     for (const path of allPaths) {
         console.log(path);
@@ -67,16 +66,15 @@ const editADocument = async () => {
             Deno.exit(1);
         }
 
-        console.group();
+        console.group(docPath);
         console.log(result);
-        console.log(`Wrote text to ${docPath}`);
         console.groupEnd();
     }
 }
 
 const listDocuments = async () => {
     const allLatestDocs = await replica.getLatestDocs();
-    console.group();
+    console.group(`Found ${allLatestDocs.length} docs`);
     console.log(allLatestDocs);
     console.groupEnd();
 }
