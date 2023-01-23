@@ -81,16 +81,15 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Add "show displayname"
 - [x] Add journal entries
 - [x] Add wiping documents
-- [ ] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for command-line actions
-- [ ] Copy over main application logic from Timekeeper React version
-- [ ] Create command add time entry
-- [ ] Create command list time entries
+- [x] Create command add time entry
+- [x] Create command list time entries
 - [ ] Create command delete time entry
-- [ ] Create command delete multiple time entries
+- [x] Create command delete multiple time entries
 - [ ] Create command edit time entry
 - [ ] Create command filter time entry by week
 - [ ] Create command summary of total hours worked by tag
 - [ ] Create command summary of total hours worked by tag and per week
+- [ ] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for command-line actions
 - [ ] Add sync with peer
 
 ---

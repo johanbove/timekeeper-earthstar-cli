@@ -30,6 +30,12 @@ const getJournalMonthDocPath = () => {
     return `/journal/${today.getFullYear()}-${month}`;
 }
 
+const getTimeEntriesMonthDocPath = () => {
+    const today = new Date();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    return `/entries/${today.getFullYear()}-${month}`;
+}
+
 const welcome = async () => {
     const displayName = await getDisplayName();
 
@@ -42,24 +48,27 @@ Welcome back ${displayName} 👋
 Hello 👋
         `);
     }
-} 
+}
 
 /**
  * Renders menu of app choices
  * @returns 
  */
 const menu = async () => {
-    
+
     await welcome();
 
     const action = await Select.prompt({
         message: "What would you like to do?",
         options: [
+            { name: "Track entry", value: "addTimeEntry" },
+            { name: "Read time entries", value: "readTimeEntries" },
+            { name: "Edit journal", value: "addJournal" },
+            { name: "Read journal", value: "readJournal" },
+            Select.separator("--------"),
             { name: "Edit a document", value: "editADocument" },
             { name: "Read a document", value: "readADocument" },
             { name: "Remove a document", value: "removeDocument" },
-            { name: "Edit journal", value: "addJournal" },
-            { name: "Read journal", value: "readJournal" },
             { name: "List paths", value: "listPaths" },
             { name: "List documents", value: "listDocuments" },
             Select.separator("--------"),
@@ -91,7 +100,7 @@ const listPaths = async () => {
     console.groupEnd();
 }
 
-const editADocument = async (opts: { text?: string, docPath?: string} = {}) => {
+const editADocument = async (opts: { text?: string, docPath?: string } = {}) => {
     const allPaths = await replica.queryPaths();
 
     let { text, docPath } = opts;
@@ -133,7 +142,7 @@ const listDocuments = async () => {
     console.groupEnd();
 }
 
-const readADocument = async (opts: { docPath?: string} = {}) => {
+const readADocument = async (opts: { docPath?: string } = {}) => {
     const allPaths = await replica.queryPaths();
 
     let { docPath } = opts;
@@ -257,7 +266,6 @@ ${textWithTimeStamp}
         `;
     }
 
-    // Warning this will overwrite existing contents!!
     await editADocument({ text: appendText, docPath });
 }
 
@@ -286,6 +294,62 @@ const removeDocument = async () => {
 const readJournal = async () => {
     const docPath = getJournalMonthDocPath();
     await readADocument({ docPath });
+}
+
+const readTimeEntries = async () => {
+    const docPath = getTimeEntriesMonthDocPath();
+    await readADocument({ docPath });
+}
+
+const addTimeEntry = async () => {
+    const action = await Select.prompt({
+        message: "Action",
+        options: [
+            { name: "START", value: "START" },
+            { name: "STOP", value: "STOP" },
+        ],
+    });
+
+    /**
+     * @TODO Add list of existing tags to pick from
+     */
+    const tag = await Input.prompt({
+        message: "Enter tag",
+        minLength: 2,
+        suggestions: ['Deloitte','BMW','Counseling','Training']
+    });
+
+    const comment = await Input.prompt({
+        message: "Enter comment",
+        suggestions: ['Meeting','Travel']
+    });
+
+    const docPath = getTimeEntriesMonthDocPath();
+
+    const result = await replica.getLatestDocAtPath(docPath);
+
+    if (Earthstar.isErr(result)) {
+        console.log(result.message);
+        Deno.exit(1);
+    }
+
+    if (!action) {
+        console.log('Please define an action!');
+        return;
+    }
+
+    const today = new Date();
+    const textWithTimeStamp = `${today.getTime()}\t${action}\t${tag}\t${comment}`;
+
+    let appendText = textWithTimeStamp;
+
+    if (result?.text) {
+        appendText = `${result.text}
+${textWithTimeStamp}
+        `;
+    }
+
+    await editADocument({ text: appendText, docPath });
 }
 
 const appAction = await menu();
@@ -323,6 +387,12 @@ switch (appAction) {
         break;
     case "readJournal":
         await readJournal();
+        break;
+    case "readTimeEntries":
+        await readTimeEntries();
+        break;
+    case "addTimeEntry":
+        await addTimeEntry();
         break;
     default:
         console.log('Please pick an action.');
