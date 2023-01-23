@@ -3,10 +3,6 @@ import { pickReplica } from "./helpers/pick_replica.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 
-console.group('SETTINGS');
-console.log('settings', settings);
-console.groupEnd();
-
 if (!settings.author) {
     console.error(
         "You can't write data without an author keypair. There isn't one saved in the settings.",
@@ -16,7 +12,11 @@ if (!settings.author) {
 
 const replica = await pickReplica();
 
-const prompt = async () => {
+/**
+ * Renders menu of app choices
+ * @returns 
+ */
+const menu = async () => {
     const action = await Select.prompt({
         message: "What would you like to do?",
         options: [
@@ -24,17 +24,24 @@ const prompt = async () => {
             { name: "Read a document", value: "readADocument" },
             { name: "List paths", value: "listPaths" },
             { name: "List documents", value: "listDocuments" },
-            { name: "Settings", value: "settings", disabled: true },
             Select.separator("--------"),
+            // Not used
+            { name: "Settings", value: "settings" },
         ],
     });
     return action;
 }
 
+const showSettings = () => {
+    console.group('SETTINGS');
+    console.log('settings', settings);
+    console.groupEnd();
+}
+
 const listPaths = async () => {
     const allPaths = await replica.queryPaths();
 
-    console.group('listPaths');
+    console.group(`Found ${allPaths.length} paths`);
 
     for (const path of allPaths) {
         console.log(path);
@@ -108,7 +115,7 @@ const readADocument = async () => {
 
 }
 
-const appAction = await prompt();
+const appAction = await menu();
 
 switch (appAction) {
     case "editADocument":
@@ -122,6 +129,9 @@ switch (appAction) {
         break;
     case "listDocuments":
         await listDocuments();
+        break;
+    case "settings":
+        showSettings();
         break;
     default:
         console.log('Please pick an action.');
