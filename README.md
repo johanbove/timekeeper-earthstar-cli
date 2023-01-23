@@ -2,7 +2,7 @@
 
 **A pure cli version of Timekeeper.**
 
-Powered by [Deno](https://deno.land) and [Earthstar Project](https://github.com/earthstar-project/earthstar)
+Powered by [Deno](https://deno.land), [Cliffy](https://deno.land/x/cliffy) and [Earthstar Project](https://github.com/earthstar-project/earthstar)
 
 ## Design Notes
 
@@ -12,11 +12,11 @@ Major difference between old Timekeeper and this version is that the "Time Entri
 
 Encountered some issues with syncing many files within a single folder with the latest version of EarthStar.
 
-The _doc_ will be stored in the path "/entries/{yyyy}-{mm}".
+The _doc_ will be stored in the path `/entries/{yyyy}-{mm}`.
 
-Every month will start a new doc.
+Every month will start a new _doc_.
 
-Each line in the path will consist of a tab separated time entry.
+Each line in the path will consist of a tab separated time entry:
 
     {timestamp}/t{action}/t{tag}/t{comment}
 
@@ -34,6 +34,19 @@ See:
 - `/about/~@{authorAddress}/displayName`
 - `/about/~@{authorAddress}/status`
 
+### Journal Entries
+
+The app should allow the user to keep a journal.
+
+Journal entries are organised in a single doc.
+
+The _doc_ will be stored in the path `/journal/{yyyy}-{mm}`.
+
+Every month will start a new _doc_.
+
+Each line in the path will consist of a tab separated time entry:
+
+    {timestamp}/t{entry}
 
 ## Journal
 
@@ -55,8 +68,10 @@ See:
 - [x] Command for creating identity / author -> `scripts/new_author.ts`
 - [x] Ask for share address -> `scripts/add_share.ts`
 - [x] Command for create share -> `scripts/new_share.ts`
-- [ ] Create command to set displayName
-- [ ] Create command to set status
+- [x] Create command to set displayName
+- [x] Create command to set status
+- [x] Add auto-complete path suggestions for "read a document"
+- [ ] Add journal entries
 - [ ] Copy over main application logic from Timekeeper React version
 - [ ] Create command add time entry
 - [ ] Create command list time entries

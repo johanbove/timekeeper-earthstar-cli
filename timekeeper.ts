@@ -1,4 +1,4 @@
-import { Earthstar, NAMESPACE, Input, Toggle, Select } from "./deps.ts";
+import { Earthstar, NAMESPACE, Input, Table, Select } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
@@ -25,8 +25,10 @@ const menu = async () => {
             { name: "List paths", value: "listPaths" },
             { name: "List documents", value: "listDocuments" },
             Select.separator("--------"),
-            // Not used
-            { name: "Settings", value: "settings" },
+            { name: "Set display name", value: "setDisplayName" },
+            { name: "Set status", value: "setStatus" },
+            Select.separator("--------"),
+            { name: "Show settings", value: "settings" },
         ],
     });
     return action;
@@ -87,8 +89,12 @@ const listDocuments = async () => {
 }
 
 const readADocument = async () => {
+    const allPaths = await replica.queryPaths();
+
     const docPath = await Input.prompt({
         message: "Enter document path",
+        minLength: 1,
+        suggestions: allPaths
     });
 
     if (!docPath) {
@@ -105,14 +111,59 @@ const readADocument = async () => {
 
     console.group(docPath);
     if (result) {
-        console.log(result?.author);
-        console.log(result?.text);
-        console.log(new Date(result?.timestamp / 1000).toISOString());
+        const table: Table = new Table(
+            [new Date(result?.timestamp / 1000).toISOString(), result?.author, result?.text],
+        );
+        console.log(table.toString());
     } else {
         console.log('Document not found.');
     }
     console.groupEnd();
 
+}
+
+const setDisplayName = async () => {
+    const displayName = await Input.prompt({
+        message: "Enter a name",
+    });
+
+    if (settings.author && displayName && displayName.length) {
+        const result = await replica.set(settings.author, {
+            path: `/about/~${settings.author?.address}/displayName`,
+            text: displayName,
+        });
+
+        if (Earthstar.isErr(result)) {
+            console.log(result.message);
+            Deno.exit(1);
+        }
+
+        console.group('DisplayName');
+        console.log(`Hello ${displayName}`);
+        console.groupEnd();
+    }
+}
+
+const setStatus = async () => {
+    const status = await Input.prompt({
+        message: "Enter a status",
+    });
+
+    if (settings.author && status && status.length) {
+        const result = await replica.set(settings.author, {
+            path: `/about/~${settings.author?.address}/status`,
+            text: status,
+        });
+
+        if (Earthstar.isErr(result)) {
+            console.log(result.message);
+            Deno.exit(1);
+        }
+
+        console.group('Status');
+        console.log(`${status}`);
+        console.groupEnd();
+    }
 }
 
 const appAction = await menu();
@@ -133,6 +184,12 @@ switch (appAction) {
     case "settings":
         showSettings();
         break;
+    case "setDisplayName":
+        await setDisplayName();
+        break;
+    case "setStatus":
+        await setStatus();
+        break;
     default:
         console.log('Please pick an action.');
         break;
@@ -141,4 +198,3 @@ switch (appAction) {
 await replica.close(false);
 
 Deno.exit(0);
-
