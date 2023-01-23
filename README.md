@@ -10,6 +10,8 @@ Powered by [Deno](https://deno.land), [Cliffy](https://deno.land/x/cliffy) and [
 
 Major difference between old Timekeeper and this version is that the "Time Entries" will be kept in single _doc_, not separate JSON files.
 
+Any author can edit and add to the time entries. This allows for delegation and being able to help each other fixing their time entries.
+
 Encountered some issues with syncing many files within a single folder with the latest version of EarthStar.
 
 The _doc_ will be stored in the path `/entries/{yyyy}-{mm}`.
@@ -29,6 +31,8 @@ Each line in the path will consist of a tab separated time entry:
 
 ### Display Name and Status
 
+The "display name" and "status" docs can only be edited by the active author.
+
 See:
 
 - `/about/~@{authorAddress}/displayName`
@@ -37,6 +41,8 @@ See:
 ### Journal Entries
 
 The app should allow the user to keep a journal.
+
+Any author can update the "journal" to allow for collaboration.
 
 Journal entries are organised in a single doc.
 
@@ -72,6 +78,7 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Create command to set status
 - [x] Add auto-complete path suggestions for "read a document"
 - [ ] Add journal entries
+- [ ] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for command-line actions
 - [ ] Copy over main application logic from Timekeeper React version
 - [ ] Create command add time entry
 - [ ] Create command list time entries
