@@ -357,9 +357,11 @@ ${textWithTimeStamp}
 }
 
 const generateTimestamp = () => {
-    console.group(`Unix timestamp for ${new Date().toLocaleString()}`);
-    console.log(new Date().getTime());
+    const today = new Date();
+    console.group(`Unix timestamp for ${today.toLocaleString()}`);
+    console.log(today.getTime());
     console.groupEnd();
+    return today.getTime();
 }
 
 const appAction = await menu();
