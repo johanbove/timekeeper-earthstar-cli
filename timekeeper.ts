@@ -349,8 +349,7 @@ const addTimeEntry = async () => {
 
     if (result?.text) {
         appendText = `${result.text}
-${textWithTimeStamp}
-        `;
+${textWithTimeStamp}`;
     }
 
     await editADocument({ text: appendText, docPath });
