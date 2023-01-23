@@ -1,4 +1,4 @@
-import { Earthstar, NAMESPACE, Select } from "./deps.ts";
+import { Earthstar, NAMESPACE, Select, SelectOption } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 import { welcome, generateTimestamp, showSettings } from "./utils/index.ts";
 import * as profile from "./profile/index.ts";
@@ -18,6 +18,128 @@ if (!settings.author) {
 // Triggers the replica selection menu at the very beginning
 const replica = await pickReplica();
 
+const SEPARATOR = { name: "separator", value: "--------" };
+
+interface SelectOptionWithAction extends SelectOption {
+    name: string;
+    value: string;
+    action: () => Promise<void | boolean | string> | string | boolean | void | number;
+}
+
+type SelectOptionWithoutAction = Omit<SelectOptionWithAction, "action">;
+
+/**
+ * Defines all of the menu items and their actions
+ */
+const menuItems: { [keys in string]: SelectOptionWithAction } = {
+    addTimeEntry: {
+        name: "Track entry",
+        value: "addTimeEntry",
+        action: async () => await addTimeEntry({ replica })
+    },
+    timeReport: {
+        name: "Time Report",
+        value: "timeReport",
+        action: async () => await timeReport({ replica })
+    },
+    readTimeEntries: {
+        name: "Check time entries",
+        value: "readTimeEntries",
+        action: async () => await readTimeEntries({ replica })
+    },
+    addJournal: {
+        name: "Edit journal",
+        value: "addJournal",
+        action: async () => await journal.add({ replica })
+    },
+    journal: {
+        name: "Read journal",
+        value: "journal",
+        action: async () => await journal.list({ replica })
+    },
+    checkJournal: {
+        name: "Check journal",
+        value: "checkJournal",
+        action: async () => await journal.check({ replica })
+    },
+    showStatus: {
+        name: "Show status",
+        value: "showStatus",
+        action: async () => await profile.showStatus({ settings, replica })
+    },
+    setStatus: {
+        name: "Set status",
+        value: "setStatus",
+        action: async () => await profile.setStatus({ settings, replica })
+    },
+    editADocument: {
+        name: "Edit a document",
+        value: "editADocument",
+        action: async () => await documents.edit({ replica })
+    },
+    readADocument: {
+        name: "Read a document",
+        value: "readADocument",
+        action: async () => await documents.read({ replica })
+    },
+    removeDocument: {
+        name: "Remove a document",
+        value: "removeDocument",
+        action: async () => await documents.remove({ replica })
+    },
+    listPaths: {
+        name: "List paths",
+        value: "listPaths",
+        action: async () => await documents.paths({ replica })
+    },
+    listDocuments: {
+        name: "List documents",
+        value: "listDocuments",
+        action: async () => await documents.list({ replica })
+    },
+    generateTimestamp: {
+        name: "Generate time stamp",
+        value: "generateTimestamp",
+        action: () => generateTimestamp()
+    },
+    setDisplayName: {
+        name: "Set display name",
+        value: "setDisplayName",
+        action: async () => await profile.setDisplayName({ settings, replica })
+    },
+    settings: {
+        name: "Show settings",
+        value: "settings",
+        action: () => showSettings(settings)
+    },
+}
+
+/**
+ * Defines the order in which the menu items appear
+ */
+const menuItemsWithSeparators: SelectOptionWithAction | SelectOptionWithoutAction[] = [
+    menuItems.addTimeEntry,
+    menuItems.timeReport,
+    menuItems.readTimeEntries,
+    SEPARATOR,
+    menuItems.addJournal,
+    menuItems.journal,
+    menuItems.checkJournal,
+    SEPARATOR,
+    menuItems.showStatus,
+    menuItems.setStatus,
+    SEPARATOR,
+    menuItems.editADocument,
+    menuItems.readADocument,
+    menuItems.removeDocument,
+    menuItems.listPaths,
+    menuItems.listDocuments,
+    SEPARATOR,
+    menuItems.generateTimestamp,
+    menuItems.setDisplayName,
+    menuItems.settings,
+]
+
 /**
  * Renders menu of app choices
  * @returns 
@@ -28,28 +150,14 @@ const menu = async () => {
 
     const action = await Select.prompt({
         message: "What would you like to do?",
-        options: [
-            { name: "Track entry", value: "addTimeEntry" },
-            { name: "Time Report", value: "timeReport" },
-            { name: "Check time entries", value: "readTimeEntries" },
-            Select.separator("--------"),
-            { name: "Edit journal", value: "addJournal" },
-            { name: "Read journal", value: "journal" },
-            { name: "Check journal", value: "checkJournal" },
-            Select.separator("--------"),
-            { name: "Show status", value: "showStatus" },
-            { name: "Set status", value: "setStatus" },
-            Select.separator("--------"),
-            { name: "Edit a document", value: "documents.edit" },
-            { name: "Read a document", value: "readADocument" },
-            { name: "Remove a document", value: "removeDocument" },
-            { name: "List paths", value: "listPaths" },
-            { name: "List documents", value: "listDocuments" },
-            Select.separator("--------"),
-            { name: "Generate time stamp", value: "generateTimestamp" },
-            { name: "Set display name", value: "setDisplayName" },
-            { name: "Show settings", value: "settings" },
-        ],
+        options: menuItemsWithSeparators.map((item) => {
+            const { name, value } = item;
+            if (name === "separator") {
+                return Select.separator(value);
+            } else {
+                return { name, value };
+            }
+        }),
         search: true
     });
 
@@ -58,58 +166,9 @@ const menu = async () => {
 
 const appAction = await menu();
 
-switch (appAction) {
-    case "editADocument":
-        await documents.edit({ replica });
-        break;
-    case "readADocument":
-        await documents.read({ replica });
-        break;
-    case "removeDocument":
-        await documents.remove({ replica });
-        break;
-    case "listPaths":
-        await documents.paths({ replica });
-        break;
-    case "listDocuments":
-        await documents.list({ replica });
-        break;
-    case "settings":
-        showSettings(settings);
-        break;
-    case "setDisplayName":
-        await profile.setDisplayName({ settings, replica });
-        break;
-    case "showStatus":
-        await profile.showStatus({ settings, replica });
-        break;
-    case "setStatus":
-        await profile.setStatus({ settings, replica });
-        break;
-    case "addJournal":
-        await journal.add({ replica });
-        break;
-    case "checkJournal":
-        await journal.check({ replica });
-        break;
-    case "journal":
-        await journal.list({ replica });
-        break;
-    case "readTimeEntries":
-        await readTimeEntries({ replica });
-        break;
-    case "addTimeEntry":
-        await addTimeEntry({ replica });
-        break;
-    case "generateTimestamp":
-        generateTimestamp();
-        break;
-    case "timeReport":
-        await timeReport({ replica });
-        break;
-    default:
-        console.log('Please pick an action.');
-        break;
+if (appAction && menuItems && menuItems[appAction] && typeof menuItems[appAction].action === 'function') {
+    const menuItem = menuItems[appAction];
+    menuItem.action();
 }
 
 await replica.close(false);
