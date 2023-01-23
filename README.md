@@ -77,6 +77,8 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Create command to set displayName
 - [x] Create command to set status
 - [x] Add auto-complete path suggestions for "read a document"
+- [x] Add "show status"
+- [x] Add "show displayname"
 - [ ] Add journal entries
 - [ ] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for command-line actions
 - [ ] Copy over main application logic from Timekeeper React version
