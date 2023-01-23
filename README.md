@@ -4,7 +4,15 @@
 
 Powered by [Deno](https://deno.land), [Cliffy](https://deno.land/x/cliffy) and [Earthstar Project](https://github.com/earthstar-project/earthstar)
 
+## Repository
+
+- <https://git.murphy-bove.net/gitea/johan/timekeeper-earthstar-cli>
+
 ## Design Notes
+
+### The Scripts
+
+These are copied over from [the Earthstar-project "user_scripts" project](https://github.com/earthstar-project/user_scripts).
 
 ### Time Entries
 
@@ -83,8 +91,8 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Add wiping documents
 - [x] Create command add time entry
 - [x] Create command list time entries
-- [ ] Create command delete time entry
 - [x] Create command delete multiple time entries
+- [ ] Create command delete time entry
 - [ ] Create command edit time entry
 - [ ] Create command filter time entry by week
 - [ ] Create command summary of total hours worked by tag
