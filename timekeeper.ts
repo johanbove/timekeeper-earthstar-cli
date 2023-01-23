@@ -76,11 +76,13 @@ const menu = async () => {
             { name: "Show status", value: "showStatus" },
             { name: "Set status", value: "setStatus" },
             Select.separator("--------"),
+            { name: "Generate time stamp", value: "generateTimestamp" },
             { name: "Set display name", value: "setDisplayName" },
             { name: "Show settings", value: "settings" },
         ],
         search: true
     });
+
     return action;
 }
 
@@ -354,6 +356,12 @@ ${textWithTimeStamp}
     await editADocument({ text: appendText, docPath });
 }
 
+const generateTimestamp = () => {
+    console.group(`Unix timestamp for ${new Date().toLocaleString()}`);
+    console.log(new Date().getTime());
+    console.groupEnd();
+}
+
 const appAction = await menu();
 
 switch (appAction) {
@@ -395,6 +403,9 @@ switch (appAction) {
         break;
     case "addTimeEntry":
         await addTimeEntry();
+        break;
+    case "generateTimestamp":
+        await generateTimestamp();
         break;
     default:
         console.log('Please pick an action.');

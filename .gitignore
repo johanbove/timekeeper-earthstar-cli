@@ -24,6 +24,7 @@ yarn-error.log*
 
 share_data/*
 data/*
+docs/*
 zips/*
 
 .reminders

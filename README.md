@@ -90,6 +90,8 @@ Each line in the path will consist of a tab separated time entry:
 - [ ] Create command summary of total hours worked by tag
 - [ ] Create command summary of total hours worked by tag and per week
 - [ ] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for command-line actions
-- [ ] Add sync with peer
+- [x] Add sync with peer
+- [x] Add export to data
+- [x] Add export to zip
 
 ---
