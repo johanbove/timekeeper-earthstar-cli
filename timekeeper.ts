@@ -51,6 +51,9 @@ const menu = async () => {
         options: [
             { name: "Edit a document", value: "editADocument" },
             { name: "Read a document", value: "readADocument" },
+            { name: "Remove a document", value: "removeDocument" },
+            { name: "Edit journal", value: "addJournal" },
+            { name: "Read journal", value: "readJournal" },
             { name: "List paths", value: "listPaths" },
             { name: "List documents", value: "listDocuments" },
             Select.separator("--------"),
@@ -82,17 +85,23 @@ const listPaths = async () => {
     console.groupEnd();
 }
 
-const editADocument = async () => {
+const editADocument = async (opts: { text?: string, docPath?: string} = {}) => {
     const allPaths = await replica.queryPaths();
 
-    const text = await Input.prompt({
-        message: "Enter document text",
-    });
+    let { text, docPath } = opts;
 
-    const docPath = await Input.prompt({
-        message: "Enter document path",
-        suggestions: allPaths
-    });
+    if (!text) {
+        text = await Input.prompt({
+            message: "Enter document text",
+        });
+    }
+
+    if (!docPath) {
+        docPath = await Input.prompt({
+            message: "Enter document path",
+            suggestions: allPaths
+        });
+    }
 
     if (settings.author && text && docPath) {
         const result = await replica.set(settings.author, {
@@ -118,18 +127,17 @@ const listDocuments = async () => {
     console.groupEnd();
 }
 
-const readADocument = async () => {
+const readADocument = async (opts: { docPath?: string} = {}) => {
     const allPaths = await replica.queryPaths();
 
-    const docPath = await Input.prompt({
-        message: "Enter document path",
-        minLength: 1,
-        suggestions: allPaths
-    });
+    let { docPath } = opts;
 
     if (!docPath) {
-        console.error("Please pick a path");
-        return
+        docPath = await Input.prompt({
+            message: "Enter document path",
+            minLength: 1,
+            suggestions: allPaths
+        });
     }
 
     const result = await replica.getLatestDocAtPath(docPath);
@@ -215,7 +223,67 @@ const showStatus = async () => {
         console.log('Document not found.');
     }
     console.groupEnd();
-} 
+}
+
+const addJournal = async () => {
+    const text = await Input.prompt({
+        message: "Enter journal text",
+        minLength: 2
+    });
+
+    const today = new Date();
+    const docPath = `/journal/${today.getFullYear()}-${today.getMonth()}`;
+
+    const result = await replica.getLatestDocAtPath(docPath);
+
+    if (Earthstar.isErr(result)) {
+        console.log(result.message);
+        Deno.exit(1);
+    }
+    
+    const textWithTimeStamp = `${today.getTime()}\t${text}`;
+
+    let appendText = textWithTimeStamp;
+
+    if (result?.text) {
+        appendText = `${result.text}
+${textWithTimeStamp}
+        `;
+    }
+
+    // Warning this will overwrite existing contents!!
+    await editADocument({ text: appendText, docPath });
+}
+
+const removeDocument = async () => {
+    const allPaths = await replica.queryPaths();
+
+    const docPath = await Input.prompt({
+        message: "Enter document path to delete",
+        suggestions: allPaths
+    });
+
+    if (settings.author && docPath) {
+        const result = await replica.wipeDocAtPath(settings.author, docPath);
+
+        if (Earthstar.isErr(result)) {
+            console.log(result.message);
+            Deno.exit(1);
+        }
+
+        console.group(`Wiped ${docPath}`);
+        console.log(result);
+        console.groupEnd();
+    }
+}
+
+const readJournal = async () => {
+    const today = new Date();
+    const docPath = `/journal/${today.getFullYear()}-${today.getMonth()}`;
+
+    // Warning this will overwrite existing contents!!
+    await readADocument({ docPath });
+}
 
 const appAction = await menu();
 
@@ -225,6 +293,9 @@ switch (appAction) {
         break;
     case "readADocument":
         await readADocument();
+        break;
+    case "removeDocument":
+        await removeDocument();
         break;
     case "listPaths":
         await listPaths();
@@ -243,6 +314,12 @@ switch (appAction) {
         break;
     case "setStatus":
         await setStatus();
+        break;
+    case "addJournal":
+        await addJournal();
+        break;
+    case "readJournal":
+        await readJournal();
         break;
     default:
         console.log('Please pick an action.');

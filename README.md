@@ -20,7 +20,7 @@ Every month will start a new _doc_.
 
 Each line in the path will consist of a tab separated time entry:
 
-    {timestamp}/t{action}/t{tag}/t{comment}
+    {timestamp}\t{action}\t{tag}\t{comment}
 
 | Key       | Description                        |
 |-----------|------------------------------------|
@@ -52,7 +52,7 @@ Every month will start a new _doc_.
 
 Each line in the path will consist of a tab separated time entry:
 
-    {timestamp}/t{entry}
+    {timestamp}\t{entry}
 
 ## Journal
 
@@ -79,7 +79,8 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Add auto-complete path suggestions for "read a document"
 - [x] Add "show status"
 - [x] Add "show displayname"
-- [ ] Add journal entries
+- [x] Add journal entries
+- [x] Add wiping documents
 - [ ] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for command-line actions
 - [ ] Copy over main application logic from Timekeeper React version
 - [ ] Create command add time entry
