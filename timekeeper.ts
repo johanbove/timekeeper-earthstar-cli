@@ -66,7 +66,7 @@ const menu = async () => {
             { name: "Time Report", value: "timeReport" },
             Select.separator("--------"),
             { name: "Edit journal", value: "addJournal" },
-            { name: "Read journal", value: "readJournal" },
+            { name: "Read journal", value: "journal" },
             Select.separator("--------"),
             { name: "Edit a document", value: "editADocument" },
             { name: "Read a document", value: "readADocument" },
@@ -363,6 +363,36 @@ const generateTimestamp = () => {
     return today.getTime();
 }
 
+const journal = async () => {
+    const docPath = getJournalMonthDocPath();
+
+    const result = await replica.getLatestDocAtPath(docPath);
+
+    if (Earthstar.isErr(result)) {
+        console.log(result.message);
+        Deno.exit(1);
+    }
+
+    // Removes potential empty new lines using the .filter()
+    const entries = result?.text.split(/\r?\n/).filter(element => element);
+
+    console.group(`Journal for ${docPath.split('/').slice(-1)}`);
+
+    if (entries?.length) {
+        const rows: Array<string>[] = [];
+        entries?.reverse().forEach((entry) => {
+            const _entry = entry.split(/\t/);
+            rows.push([new Date(parseInt(_entry[0], 10)).toLocaleString(), ..._entry.slice(1)]);
+        })
+
+        const table: Table = Table.from(rows);
+
+        console.log(table.toString());
+    } else {
+        console.log('Document not found.');
+    }
+    console.groupEnd();
+}
 const timeReport = async () => {
     const docPath = getTimeEntriesMonthDocPath();
 
@@ -373,7 +403,8 @@ const timeReport = async () => {
         Deno.exit(1);
     }
 
-    const entries = result?.text.split(/\r?\n/);
+    // Removes potential empty new lines using the .filter()
+    const entries = result?.text.split(/\r?\n/).filter(element => element);
 
     console.group(`Time Report for ${docPath.split('/').slice(-1)}`);
 
@@ -440,6 +471,9 @@ switch (appAction) {
         break;
     case "timeReport":
         await timeReport();
+        break;
+    case "journal":
+        await journal();
         break;
     default:
         console.log('Please pick an action.');
