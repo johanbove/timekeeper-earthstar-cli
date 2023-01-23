@@ -12,11 +12,40 @@ if (!settings.author) {
 
 const replica = await pickReplica();
 
+const getDisplayName = async () => {
+    const docPath = `/about/~${settings.author?.address}/displayName`
+    const result = await replica.getLatestDocAtPath(docPath);
+
+    if (Earthstar.isErr(result)) {
+        console.log(result.message);
+        Deno.exit(1);
+    }
+
+    return result?.text ? result?.text : undefined;
+}
+
+const welcome = async () => {
+    const displayName = await getDisplayName();
+
+    if (displayName) {
+        console.log(`
+Welcome back ${displayName} 👋
+    `);
+    } else {
+        console.log(`
+Hello 👋
+        `);
+    }
+} 
+
 /**
  * Renders menu of app choices
  * @returns 
  */
 const menu = async () => {
+    
+    await welcome();
+
     const action = await Select.prompt({
         message: "What would you like to do?",
         options: [
@@ -25,9 +54,10 @@ const menu = async () => {
             { name: "List paths", value: "listPaths" },
             { name: "List documents", value: "listDocuments" },
             Select.separator("--------"),
-            { name: "Set display name", value: "setDisplayName" },
+            { name: "Show status", value: "showStatus" },
             { name: "Set status", value: "setStatus" },
             Select.separator("--------"),
+            { name: "Set display name", value: "setDisplayName" },
             { name: "Show settings", value: "settings" },
         ],
     });
@@ -112,7 +142,7 @@ const readADocument = async () => {
     console.group(docPath);
     if (result) {
         const table: Table = new Table(
-            [new Date(result?.timestamp / 1000).toISOString(), result?.author, result?.text],
+            [new Date(result?.timestamp / 1000).toLocaleString(), result?.author, result?.text],
         );
         console.log(table.toString());
     } else {
@@ -166,6 +196,27 @@ const setStatus = async () => {
     }
 }
 
+const showStatus = async () => {
+    const docPath = `/about/~${settings.author?.address}/status`
+    const result = await replica.getLatestDocAtPath(docPath);
+
+    if (Earthstar.isErr(result)) {
+        console.log(result.message);
+        Deno.exit(1);
+    }
+
+    console.group(docPath);
+    if (result) {
+        const table: Table = new Table(
+            [new Date(result?.timestamp / 1000).toLocaleString(), result?.text],
+        );
+        console.log(table.toString());
+    } else {
+        console.log('Document not found.');
+    }
+    console.groupEnd();
+} 
+
 const appAction = await menu();
 
 switch (appAction) {
@@ -186,6 +237,9 @@ switch (appAction) {
         break;
     case "setDisplayName":
         await setDisplayName();
+        break;
+    case "showStatus":
+        await showStatus();
         break;
     case "setStatus":
         await setStatus();
