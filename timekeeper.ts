@@ -63,6 +63,7 @@ const menu = async () => {
         options: [
             { name: "Track entry", value: "addTimeEntry" },
             { name: "Read time entries", value: "readTimeEntries" },
+            { name: "Time Report", value: "timeReport" },
             Select.separator("--------"),
             { name: "Edit journal", value: "addJournal" },
             { name: "Read journal", value: "readJournal" },
@@ -362,6 +363,36 @@ const generateTimestamp = () => {
     return today.getTime();
 }
 
+const timeReport = async () => {
+    const docPath = getTimeEntriesMonthDocPath();
+
+    const result = await replica.getLatestDocAtPath(docPath);
+
+    if (Earthstar.isErr(result)) {
+        console.log(result.message);
+        Deno.exit(1);
+    }
+
+    const entries = result?.text.split(/\r?\n/);
+
+    console.group(`Time Report for ${docPath.split('/').slice(-1)}`);
+
+    if (entries?.length) {
+        const rows: Array<string>[] = [];
+        entries?.reverse().forEach((entry) => {
+            const _entry = entry.split(/\t/);
+            rows.push([new Date(parseInt(_entry[0], 10)).toLocaleString(), ..._entry.slice(1)]);
+        })
+
+        const table: Table = Table.from(rows);
+
+        console.log(table.toString());
+    } else {
+        console.log('Document not found.');
+    }
+    console.groupEnd();
+}
+
 const appAction = await menu();
 
 switch (appAction) {
@@ -405,7 +436,10 @@ switch (appAction) {
         await addTimeEntry();
         break;
     case "generateTimestamp":
-        await generateTimestamp();
+        generateTimestamp();
+        break;
+    case "timeReport":
+        await timeReport();
         break;
     default:
         console.log('Please pick an action.');

@@ -103,5 +103,6 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Add export to data
 - [x] Add export to zip
 - [ ] Add unit tests
+- [x] Add Time Report for current month
 
 ---
