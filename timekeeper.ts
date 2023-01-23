@@ -168,7 +168,7 @@ const appAction = await menu();
 
 if (appAction && menuItems && menuItems[appAction] && typeof menuItems[appAction].action === 'function') {
     const menuItem = menuItems[appAction];
-    menuItem.action();
+    await menuItem.action();
 }
 
 await replica.close(false);
