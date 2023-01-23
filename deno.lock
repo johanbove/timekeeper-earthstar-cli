@@ -252,5 +252,21 @@
     "https://esm.sh/v96/sha256-uint8array@0.10.3/types/sha256-uint8array.d.ts": "60362f82662d61e60c4e9f4dca95e108cda56d3894cee115ffab6a25ab04f77a",
     "https://raw.githubusercontent.com/sgwilym/noble-ed25519/153f9e7e9952ad22885f5abb3f6abf777bef4a4c/index.ts": "7bbdf74c218c856982948b3e4c63a276fee69d73f581db5c84ecfe2a37f1f371",
     "https://raw.githubusercontent.com/sgwilym/noble-ed25519/153f9e7e9952ad22885f5abb3f6abf777bef4a4c/mod.ts": "92f8abb3961cc84a393878ab48b0223dc25ee707400207922cb544aa7cdfbbe6"
+  },
+  "npm": {
+    "specifiers": {
+      "dot-beat-time": "dot-beat-time@1.2.1",
+      "luxon@3": "luxon@3.2.1"
+    },
+    "packages": {
+      "dot-beat-time@1.2.1": {
+        "integrity": "sha512-/SZynid/jSoG+7SeCeImFLgOUGA00m8hU//IeUR+kmWQXR/3cgP0YyA0V5efHu2yU1Eza2KTVLYomXjc61XybA==",
+        "dependencies": {}
+      },
+      "luxon@3.2.1": {
+        "integrity": "sha512-QrwPArQCNLAKGO/C+ZIilgIuDnEnKx5QYODdDtbFaxzsbZcc/a7WFq7MhsVYgRlwawLtvOUESTlfJ+hc/USqPg==",
+        "dependencies": {}
+      }
+    }
   }
 }
