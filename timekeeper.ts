@@ -24,6 +24,12 @@ const getDisplayName = async () => {
     return result?.text ? result?.text : undefined;
 }
 
+const getJournalMonthDocPath = () => {
+    const today = new Date();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    return `/journal/${today.getFullYear()}-${month}`;
+}
+
 const welcome = async () => {
     const displayName = await getDisplayName();
 
@@ -231,8 +237,7 @@ const addJournal = async () => {
         minLength: 2
     });
 
-    const today = new Date();
-    const docPath = `/journal/${today.getFullYear()}-${today.getMonth()}`;
+    const docPath = getJournalMonthDocPath();
 
     const result = await replica.getLatestDocAtPath(docPath);
 
@@ -240,7 +245,8 @@ const addJournal = async () => {
         console.log(result.message);
         Deno.exit(1);
     }
-    
+
+    const today = new Date();
     const textWithTimeStamp = `${today.getTime()}\t${text}`;
 
     let appendText = textWithTimeStamp;
@@ -278,10 +284,7 @@ const removeDocument = async () => {
 }
 
 const readJournal = async () => {
-    const today = new Date();
-    const docPath = `/journal/${today.getFullYear()}-${today.getMonth()}`;
-
-    // Warning this will overwrite existing contents!!
+    const docPath = getJournalMonthDocPath();
     await readADocument({ docPath });
 }
 
