@@ -63,6 +63,7 @@ const menu = async () => {
         options: [
             { name: "Track entry", value: "addTimeEntry" },
             { name: "Read time entries", value: "readTimeEntries" },
+            Select.separator("--------"),
             { name: "Edit journal", value: "addJournal" },
             { name: "Read journal", value: "readJournal" },
             Select.separator("--------"),
@@ -78,6 +79,7 @@ const menu = async () => {
             { name: "Set display name", value: "setDisplayName" },
             { name: "Show settings", value: "settings" },
         ],
+        search: true
     });
     return action;
 }
