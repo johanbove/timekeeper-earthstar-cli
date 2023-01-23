@@ -102,5 +102,6 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Add sync with peer
 - [x] Add export to data
 - [x] Add export to zip
+- [ ] Add unit tests
 
 ---
