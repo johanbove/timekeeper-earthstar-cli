@@ -1,4 +1,4 @@
-import { Earthstar, NAMESPACE, Input, Table, Select } from "./deps.ts";
+import { Earthstar, NAMESPACE, Input, Table, Select, TAGS, COMMENTS } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
@@ -319,12 +319,12 @@ const addTimeEntry = async () => {
     const tag = await Input.prompt({
         message: "Enter tag",
         minLength: 2,
-        suggestions: ['Deloitte','BMW','Counseling','Training']
+        suggestions: TAGS
     });
 
     const comment = await Input.prompt({
         message: "Enter comment",
-        suggestions: ['Meeting','Travel']
+        suggestions: COMMENTS
     });
 
     const docPath = getTimeEntriesMonthDocPath();
