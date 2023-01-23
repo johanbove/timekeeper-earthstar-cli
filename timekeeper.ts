@@ -1,10 +1,10 @@
 import { Earthstar, NAMESPACE, Select, SelectOption } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
-import { welcome, generateTimestamp, showSettings } from "./utils/index.ts";
-import * as profile from "./profile/index.ts";
-import * as documents from "./documents/index.ts";
-import * as journal from "./journal/index.ts";
-import { timeReport, addTimeEntry, readTimeEntries } from "./timeentries/index.ts";
+import { welcome, generateTimestamp, showSettings } from "./src/utils/index.ts";
+import * as profile from "./src/profile/index.ts";
+import * as documents from "./src/documents/index.ts";
+import * as journal from "./src/journal/index.ts";
+import { timeReport, addTimeEntry, readTimeEntries } from "./src/timeentries/index.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 

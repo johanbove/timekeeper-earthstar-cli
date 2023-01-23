@@ -1,4 +1,4 @@
-import { Earthstar, Input, Table } from "../deps.ts";
+import { Earthstar, Input, Table } from "../../deps.ts";
 
 export const setDisplayName = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
     const { replica, settings } = opts;

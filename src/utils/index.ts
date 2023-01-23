@@ -1,4 +1,4 @@
-import { Earthstar } from "../deps.ts";
+import { Earthstar } from "../../deps.ts";
 
 export const getDisplayName = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
     const { settings, replica } = opts;

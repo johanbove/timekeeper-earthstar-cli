@@ -1,9 +1,10 @@
-import { Earthstar, Input, Table, Select, TAGS, COMMENTS } from "../deps.ts";
-import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
-import { edit, read } from "../documents/index.ts";
 // https://deno.land/manual@v1.29.4/node/npm_specifiers
 import { DateTime, WeekNumbers, Interval } from "npm:luxon@3";
 import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
+
+import { Earthstar, Input, Table, Select, TAGS, COMMENTS } from "../../deps.ts";
+import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
+import { edit, read } from "../documents/index.ts";
 
 export enum actions { START = 'START', STOP = 'STOP' }
 

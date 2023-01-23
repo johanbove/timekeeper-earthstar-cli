@@ -1,4 +1,4 @@
-import { Earthstar, Input, Table } from "../deps.ts";
+import { Earthstar, Input, Table } from "../../deps.ts";
 import { getJournalMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 
