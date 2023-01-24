@@ -1,0 +1,3 @@
+[submodule "user_scripts"]
+	path = user_scripts
+	url = git@github.com:earthstar-project/user_scripts.git

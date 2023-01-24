@@ -64,6 +64,11 @@ Each line in the path will consist of a tab separated time entry:
 
 ## Journal
 
+## 2022-01-24, Tuesday
+
+- Got the cli working!
+- Added the "user_scripts" repo as a Git submodule but cannot run the scripts because the "settings" won't be shared with the main app. So the files are here for easy access, not to be called directly.
+
 ### 2022-01-23, Monday
 
 - Started building this CLI for my next version of TimeKeeper.
