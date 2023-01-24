@@ -1,174 +1,66 @@
-import { Earthstar, NAMESPACE, Select, SelectOption } from "./deps.ts";
+import { Earthstar, NAMESPACE, Command } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
-import { welcome, generateTimestamp, showSettings } from "./src/utils/index.ts";
-import * as profile from "./src/profile/index.ts";
-import * as documents from "./src/documents/index.ts";
-import * as journal from "./src/journal/index.ts";
-import { timeReport, addTimeEntry, readTimeEntries } from "./src/timeentries/index.ts";
+import { menu, setMenuItems } from "./src/menu.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 
+// Checks if we have a registered author in the settings
+// if not it will complain and the user needs to run
+//  ./scripts/new_author.ts
 if (!settings.author) {
     console.error(
-        "You can't write data without an author keypair. There isn't one saved in the settings.",
+        "You can't write data without an author keypair. There isn't one saved in the settings. Run ./scripts/new_author.ts",
     );
     Deno.exit(1);
 }
 
-// Triggers the replica selection menu at the very beginning
-const replica = await pickReplica();
+let command: string | undefined;
+let replica: Earthstar.Replica | undefined;
 
-const SEPARATOR = { name: "separator", value: "--------" };
-
-interface SelectOptionWithAction extends SelectOption {
-    name: string;
-    value: string;
-    action: () => Promise<void | boolean | string> | string | boolean | void | number;
-}
-
-type SelectOptionWithoutAction = Omit<SelectOptionWithAction, "action">;
-
-/**
- * Defines all of the menu items and their actions
- */
-const menuItems: { [keys in string]: SelectOptionWithAction } = {
-    addTimeEntry: {
-        name: "Track entry",
-        value: "addTimeEntry",
-        action: async () => await addTimeEntry({ replica })
-    },
-    timeReport: {
-        name: "Time Report",
-        value: "timeReport",
-        action: async () => await timeReport({ replica })
-    },
-    readTimeEntries: {
-        name: "Check time entries",
-        value: "readTimeEntries",
-        action: async () => await readTimeEntries({ replica })
-    },
-    addJournal: {
-        name: "Edit journal",
-        value: "addJournal",
-        action: async () => await journal.add({ replica })
-    },
-    journal: {
-        name: "Read journal",
-        value: "journal",
-        action: async () => await journal.list({ replica })
-    },
-    checkJournal: {
-        name: "Check journal",
-        value: "checkJournal",
-        action: async () => await journal.check({ replica })
-    },
-    showStatus: {
-        name: "Show status",
-        value: "showStatus",
-        action: async () => await profile.showStatus({ settings, replica })
-    },
-    setStatus: {
-        name: "Set status",
-        value: "setStatus",
-        action: async () => await profile.setStatus({ settings, replica })
-    },
-    editADocument: {
-        name: "Edit a document",
-        value: "editADocument",
-        action: async () => await documents.edit({ replica })
-    },
-    readADocument: {
-        name: "Read a document",
-        value: "readADocument",
-        action: async () => await documents.read({ replica })
-    },
-    removeDocument: {
-        name: "Remove a document",
-        value: "removeDocument",
-        action: async () => await documents.remove({ replica })
-    },
-    listPaths: {
-        name: "List paths",
-        value: "listPaths",
-        action: async () => await documents.paths({ replica })
-    },
-    listDocuments: {
-        name: "List documents",
-        value: "listDocuments",
-        action: async () => await documents.list({ replica })
-    },
-    generateTimestamp: {
-        name: "Generate time stamp",
-        value: "generateTimestamp",
-        action: () => generateTimestamp()
-    },
-    setDisplayName: {
-        name: "Set display name",
-        value: "setDisplayName",
-        action: async () => await profile.setDisplayName({ settings, replica })
-    },
-    settings: {
-        name: "Show settings",
-        value: "settings",
-        action: () => showSettings(settings)
-    },
-}
-
-/**
- * Defines the order in which the menu items appear
- */
-const menuItemsWithSeparators: SelectOptionWithAction | SelectOptionWithoutAction[] = [
-    menuItems.addTimeEntry,
-    menuItems.timeReport,
-    menuItems.readTimeEntries,
-    SEPARATOR,
-    menuItems.addJournal,
-    menuItems.journal,
-    menuItems.checkJournal,
-    SEPARATOR,
-    menuItems.showStatus,
-    menuItems.setStatus,
-    SEPARATOR,
-    menuItems.editADocument,
-    menuItems.readADocument,
-    menuItems.removeDocument,
-    menuItems.listPaths,
-    menuItems.listDocuments,
-    SEPARATOR,
-    menuItems.generateTimestamp,
-    menuItems.setDisplayName,
-    menuItems.settings,
-]
-
-/**
- * Renders menu of app choices
- * @returns 
- */
-const menu = async () => {
-
-    await welcome({ settings, replica });
-
-    const action = await Select.prompt({
-        message: "What would you like to do?",
-        options: menuItemsWithSeparators.map((item) => {
-            const { name, value } = item;
-            if (name === "separator") {
-                return Select.separator(value);
-            } else {
-                return { name, value };
-            }
-        }),
-        search: true
+const initReplica = async (share?: string) => {
+    if (!share) {
+       return await pickReplica();
+    }
+    const shareKeypair = { address: share, secret: settings.shareSecrets[share] };
+    return new Earthstar.Replica({
+        driver: new Earthstar.ReplicaDriverFs(
+            shareKeypair.address,
+            `./share_data/${shareKeypair.address}/`,
+        ),
+        shareSecret: shareKeypair.secret,
     });
-
-    return action;
 }
 
-const appAction = await menu();
+await new Command()
+    .name("timekeeper")
+    .version("0.1.0")
+    .description("Earthstar Timekeeper")
+    .globalOption("-s, --share <share:string>", "Set the share address")
+    // Main Action generates the menu
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+        await menu({ command, settings, replica });
+    })
+    // Sub commands
+    .command("report", "Time Report")
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        await menuItems.timeReport.action();
+    })
+    .command("journal", "Read journal")
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        await menuItems.journal.action();
+    })
+    .parse(Deno.args);
 
-if (appAction && menuItems && menuItems[appAction] && typeof menuItems[appAction].action === 'function') {
-    const menuItem = menuItems[appAction];
-    await menuItem.action();
+if (!replica) {
+    throw new Error('Please select a replica first.');
 }
 
 await replica.close(false);

@@ -1,5 +1,5 @@
 // https://deno.land/manual@v1.29.4/node/npm_specifiers
-import { DateTime, WeekNumbers, Interval } from "npm:luxon@3";
+import { DateTime, Interval } from "npm:luxon@3";
 import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
 
 import { Earthstar, Input, Table, Select, TAGS, COMMENTS } from "../../deps.ts";
@@ -70,7 +70,7 @@ interface StatisticsProps {
 
 interface ThisWeekReportProps {
     currentWeekId: string,
-    currentWeekNumber: WeekNumbers,
+    currentWeekNumber: number,
     tagsPerWeek: TimeSeriesReport,
     weekDays: TimeSeriesReport,
     tagsPerDay: TimeSeriesReport,
@@ -85,7 +85,7 @@ interface TimeEntriesProps {
 
 interface DailyFlowProps {
     currentWeekId: string,
-    currentWeekNumber: WeekNumbers,
+    currentWeekNumber: number,
     parsedEntries: TimeEntry[],
 }
 
@@ -109,11 +109,11 @@ function getEntryData(_data: EntryData, key: string) {
  * `_data[parseInt(timestamp, 10) * 1e3] = JSON.parse(entry.content);`
  * 
  * @param _data EntryData 
- * @param weekNumber WeekNumbers
+ * @param weekNumber number
  * @param year string Two digit year (not expecting this app to last over a hundred years...)
  * @returns 
 */
-const parseTimeEntries = (_data: EntryData, weekNumber?: WeekNumbers, year?: number) => {
+const parseTimeEntries = (_data: EntryData, weekNumber?: number, year?: number) => {
 
     // Newest first
     const entries = Object.keys(_data).sort().reverse();
