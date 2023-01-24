@@ -33,9 +33,9 @@ const initReplica = async (share?: string) => {
 
 await new Command()
     .name("timekeeper")
-    .version("0.1.0")
+    .version("1.1.0")
     .description("Earthstar Timekeeper")
-    .globalOption("-s, --share <share:string>", "Set the share address")
+    .globalOption("-s, --share <share:string>", "Set the Earthstar share address")
     // Main Action generates the menu
     .action(async (options: { share?: string }) => {
         const { share } = options;
@@ -56,6 +56,13 @@ await new Command()
         replica = await initReplica(share);
         const menuItems = setMenuItems({ settings, replica });
         await menuItems.journal.action();
+    })
+    .command("status", "Show status")
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        await menuItems.showStatus.action();
     })
     .parse(Deno.args);
 
