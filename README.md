@@ -110,5 +110,7 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Add export to zip
 - [ ] Add unit tests
 - [x] Add Time Report for current month
+- [x] Refine onboarding with new author and new share
+- [x] Add clearing of settings command
 
 ---

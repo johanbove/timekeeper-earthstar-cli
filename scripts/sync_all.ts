@@ -23,7 +23,7 @@ const syncOps = settings.servers.map((serverUrl) => {
   const syncer = peer.sync(serverUrl);
 
   console.log(`Found server to sync with: ${serverUrl}`);
-  console.log(syncer);
+  // console.log(syncer);
 
   syncer.isDone().then(() => {
     console.log(`✅ Synced with ${serverUrl}`);

@@ -1,5 +1,5 @@
 import { NAMESPACE, VERSION, DESCRIPTION, APPNAME } from "./constants.ts";
-import { Earthstar, Command } from "./deps.ts";
+import { Earthstar, Command, Confirm } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 import { menu, setMenuItems } from "./src/menu.ts";
 
@@ -10,7 +10,14 @@ const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 //  ./scripts/new_author.ts
 if (!settings.author) {
     console.error(
-        "You can't write data without an author keypair. There isn't one saved in the settings. Run ./scripts/new_author.ts",
+        "You can't write data without an author keypair. There isn't one saved in the settings. Create a new author or add an existing one. See scripts.",
+    );
+    Deno.exit(1);
+}
+
+if (!settings.shares?.length) {
+    console.error(
+        "Please set a share either by creating a new one or setting an existing share. See scripts.",
     );
     Deno.exit(1);
 }
@@ -90,6 +97,14 @@ await new Command()
             await menuItems.setStatus.action(edit);
         } else {
             await menuItems.showStatus.action();
+        }
+    })
+    .command("reset", "Resets and clears the settings storage")
+    .action(async () => {
+        const confirmed: boolean = await Confirm.prompt("Please confirm you want to remove all stored settings");
+        if (confirmed) {
+            console.log('Clearing settings:', settings);
+            settings.clear();
         }
     })
     .parse(Deno.args);
