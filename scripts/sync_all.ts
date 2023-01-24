@@ -1,6 +1,6 @@
 // Sync all known shares with all known servers.
-
-import { Earthstar, NAMESPACE } from "../deps.ts";
+import { Earthstar } from "../deps.ts";
+import { NAMESPACE } from "../constants.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 

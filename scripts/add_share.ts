@@ -1,4 +1,5 @@
-import { Earthstar, Input, NAMESPACE } from "../deps.ts";
+import { Earthstar, Input } from "../deps.ts";
+import { NAMESPACE } from "../constants.ts";
 
 const address = await Input.prompt({
   message: "What is the share's address?",

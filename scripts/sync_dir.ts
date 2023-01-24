@@ -1,4 +1,5 @@
-import { Earthstar, Input, NAMESPACE } from "../deps.ts";
+import { Earthstar, Input } from "../deps.ts";
+import { NAMESPACE } from "../constants.ts";
 import { pickReplica } from "../helpers/pick_replica.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });

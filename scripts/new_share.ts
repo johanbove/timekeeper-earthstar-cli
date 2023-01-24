@@ -1,4 +1,5 @@
-import { Earthstar, NAMESPACE } from "../deps.ts";
+import { Earthstar } from "../deps.ts";
+import { NAMESPACE } from "../constants.ts";
 
 const name = Deno.args[0];
 

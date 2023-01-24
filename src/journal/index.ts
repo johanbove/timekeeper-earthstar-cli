@@ -2,6 +2,8 @@ import { Earthstar, Input, Table } from "../../deps.ts";
 import { getJournalMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 
+const LIMIT = 5;
+
 export const add = async (opts: { text?: string, replica: Earthstar.Replica }) => {
     const { replica, text } = opts;
 
@@ -56,11 +58,16 @@ export const list = async (opts: { replica: Earthstar.Replica }) => {
     // Removes potential empty new lines using the .filter()
     const entries = result?.text.split(/\r?\n/).filter(element => element);
 
-    console.group(`Journal for ${docPath.split('/').slice(-1)}`);
+    console.group(`
+Journal for ${docPath.split('/').slice(-1)}
+
+Showing ${LIMIT} of ${entries?.length} entries.
+`);
 
     if (entries?.length) {
         const rows: Array<string>[] = [];
-        entries?.reverse().forEach((entry) => {
+        const _entries = entries?.slice(-LIMIT).reverse();
+        _entries.forEach((entry) => {
             const _entry = entry.split(/\t/);
             rows.push([new Date(parseInt(_entry[0], 10)).toLocaleString(), ..._entry.slice(1)]);
         })

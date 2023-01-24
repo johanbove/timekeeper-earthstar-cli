@@ -36,6 +36,9 @@ await new Command()
     .name(APPNAME)
     .version(VERSION)
     .description(DESCRIPTION)
+    .meta("deno", Deno.version.deno)
+    .meta("v8", Deno.version.v8)
+    .meta("typescript", Deno.version.typescript)
     .globalOption("-s, --share <share:string>", "Set the Earthstar share address")
     // Main Action generates the menu
     .action(async (options: { share?: string }) => {
@@ -55,7 +58,6 @@ await new Command()
     .option("-e, --edit <status:string>", "Sets the journal")
     .action(async (options: { share?: string, edit?: string }) => {
         const { share, edit } = options;
-        console.log('journal', options);
         replica = await initReplica(share);
         const menuItems = setMenuItems({ settings, replica });
         if (edit?.length) {
