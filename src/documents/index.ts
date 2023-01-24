@@ -1,4 +1,5 @@
-import { Earthstar, Input, NAMESPACE, Table } from "../../deps.ts";
+import { NAMESPACE } from "../../constants.ts";
+import { Earthstar, Input, Table } from "../../deps.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 

@@ -2,13 +2,17 @@ import { Earthstar, Input, Table } from "../../deps.ts";
 import { getJournalMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 
-export const add = async (opts: { replica: Earthstar.Replica }) => {
-    const { replica } = opts;
+export const add = async (opts: { text?: string, replica: Earthstar.Replica }) => {
+    const { replica, text } = opts;
 
-    const text = await Input.prompt({
-        message: "Enter journal text",
-        minLength: 2
-    });
+    let _text: string | undefined = text;
+
+    if (!_text) {
+        _text = await Input.prompt({
+            message: "Enter journal text",
+            minLength: 2
+        });
+    }
 
     const docPath = getJournalMonthDocPath();
 
@@ -20,7 +24,7 @@ export const add = async (opts: { replica: Earthstar.Replica }) => {
     }
 
     const today = new Date();
-    const textWithTimeStamp = `${today.getTime()}\t${text}`;
+    const textWithTimeStamp = `${today.getTime()}\t${_text}`;
 
     let appendText = textWithTimeStamp;
 

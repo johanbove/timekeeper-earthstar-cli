@@ -1,5 +1,3 @@
-export { NAMESPACE, TAGS, COMMENTS } from "./constants.ts";
-
 export * as Earthstar from "https://deno.land/x/earthstar@v10.0.1/mod.ts";
 
 export {

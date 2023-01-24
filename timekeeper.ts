@@ -1,4 +1,5 @@
-import { Earthstar, NAMESPACE, Command } from "./deps.ts";
+import { NAMESPACE, VERSION, DESCRIPTION, APPNAME } from "./constants.ts";
+import { Earthstar, Command } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 import { menu, setMenuItems } from "./src/menu.ts";
 
@@ -32,9 +33,9 @@ const initReplica = async (share?: string) => {
 }
 
 await new Command()
-    .name("timekeeper")
-    .version("1.1.0")
-    .description("Earthstar Timekeeper")
+    .name(APPNAME)
+    .version(VERSION)
+    .description(DESCRIPTION)
     .globalOption("-s, --share <share:string>", "Set the Earthstar share address")
     // Main Action generates the menu
     .action(async (options: { share?: string }) => {
@@ -51,18 +52,29 @@ await new Command()
         await menuItems.timeReport.action();
     })
     .command("journal", "Read journal")
-    .action(async (options: { share?: string }) => {
-        const { share } = options;
+    .option("-e, --edit <status:string>", "Sets the journal")
+    .action(async (options: { share?: string, edit?: string }) => {
+        const { share, edit } = options;
+        console.log('journal', options);
         replica = await initReplica(share);
         const menuItems = setMenuItems({ settings, replica });
-        await menuItems.journal.action();
+        if (edit?.length) {
+            await menuItems.addJournal.action(edit);
+        } else {
+            await menuItems.journal.action();
+        }
     })
     .command("status", "Show status")
-    .action(async (options: { share?: string }) => {
-        const { share } = options;
+    .option("-e, --edit <status:string>", "Set the status")
+    .action(async (options: { share?: string, edit?: string }) => {
+        const { share, edit } = options;
         replica = await initReplica(share);
         const menuItems = setMenuItems({ settings, replica });
-        await menuItems.showStatus.action();
+        if (edit?.length) {
+            await menuItems.setStatus.action(edit);
+        } else {
+            await menuItems.showStatus.action();
+        }
     })
     .parse(Deno.args);
 

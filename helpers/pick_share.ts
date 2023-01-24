@@ -1,4 +1,5 @@
-import { Earthstar, Select, NAMESPACE } from "../deps.ts";
+import { Earthstar, Select } from "../deps.ts";
+import { NAMESPACE } from "../constants.ts";
 
 export async function pickShare(): Promise<{
   address: string;

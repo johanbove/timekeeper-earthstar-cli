@@ -24,17 +24,21 @@ export const setDisplayName = async (opts: { settings: Earthstar.SharedSettings,
     }
 }
 
-export const setStatus = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
-    const { replica, settings } = opts;
-    
-    const status = await Input.prompt({
-        message: "Enter a status",
-    });
+export const setStatus = async (opts: { status?: string, settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
+    const { replica, settings, status } = opts;
+
+    let _status: string | undefined = status;
+
+    if (!status) {
+        _status = await Input.prompt({
+            message: "Enter a status",
+        });
+    }
 
     if (settings.author && status && status.length) {
         const result = await replica.set(settings.author, {
             path: `/about/~${settings.author?.address}/status`,
-            text: status,
+            text: _status,
         });
 
         if (Earthstar.isErr(result)) {

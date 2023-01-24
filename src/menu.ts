@@ -11,7 +11,7 @@ const SEPARATOR = { name: "separator", value: "--------" };
 interface SelectOptionWithAction extends SelectOption {
     name: string;
     value: string;
-    action: () => Promise<void | boolean | string> | string | boolean | void | number;
+    action: (opts?: string) => Promise<void | boolean | string> | string | boolean | void | number;
 }
 
 type SelectOptionWithoutAction = Omit<SelectOptionWithAction, "action">;
@@ -40,7 +40,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         addJournal: {
             name: "Edit journal",
             value: "addJournal",
-            action: async () => await journal.add({ replica })
+            action: async (text?: string) => await journal.add({ text, replica })
         },
         journal: {
             name: "Read journal",
@@ -60,7 +60,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         setStatus: {
             name: "Set status",
             value: "setStatus",
-            action: async () => await profile.setStatus({ settings, replica })
+            action: async (status?: string) => await profile.setStatus({ status, settings, replica })
         },
         editADocument: {
             name: "Edit a document",

@@ -1,4 +1,7 @@
 export const NAMESPACE = 'TimeKeeperV2';
+export const APPNAME = "timekeeper";
+export const VERSION = "1.1.0";
+export const DESCRIPTION = "Earthstar Timekeeper";
 /**
  * Temporary hard-coded until parsing from previous time entries works.
  */

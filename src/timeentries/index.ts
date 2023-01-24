@@ -1,8 +1,8 @@
 // https://deno.land/manual@v1.29.4/node/npm_specifiers
 import { DateTime, Interval } from "npm:luxon@3";
 import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
-
-import { Earthstar, Input, Table, Select, TAGS, COMMENTS } from "../../deps.ts";
+import { TAGS, COMMENTS } from "../../constants.ts";
+import { Earthstar, Input, Table, Select } from "../../deps.ts";
 import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 
