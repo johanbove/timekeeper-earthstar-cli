@@ -47,7 +47,7 @@ interface TimeEntry {
 }
 
 interface Entry {
-    action: Actions,
+    action: string,
     tag?: string,
     comment?: string
 }
@@ -356,29 +356,42 @@ export const readTimeEntries = async (opts: { replica: Earthstar.Replica }) => {
     await read({ replica, docPath });
 }
 
-export const addTimeEntry = async (opts: { replica: Earthstar.Replica }) => {
-    const { replica } = opts;
-    const action = await Select.prompt({
-        message: "Action",
-        options: [
-            { name: "START", value: "START" },
-            { name: "STOP", value: "STOP" },
-        ],
-    });
+export const addTimeEntry = async (opts: { entry?: Entry, replica: Earthstar.Replica }) => {
+    const { replica, entry } = opts;
 
-    /**
-     * @TODO Add list of existing tags to pick from
-     */
-    const tag = await Input.prompt({
-        message: "Enter tag",
-        minLength: 2,
-        suggestions: TAGS
-    });
+    const { action, tag, comment } = entry || {};
 
-    const comment = await Input.prompt({
-        message: "Enter comment",
-        suggestions: COMMENTS
-    });
+    let _action: string | undefined = action;
+    let _tag: string | undefined = tag;
+    let _comment: string | undefined = comment;
+
+    if (!action || (action !== "START" && action !== "STOP")) {
+        _action = await Select.prompt({
+            message: "Action",
+            options: [
+                { name: "START", value: "START" },
+                { name: "STOP", value: "STOP" },
+            ],
+        });
+    }
+
+    if (!tag) {
+        /**
+         * @TODO Add list of existing tags to pick from
+         */
+        _tag = await Input.prompt({
+            message: "Enter tag",
+            minLength: 2,
+            suggestions: TAGS
+        });
+    }
+
+    if (!comment) {
+        _comment = await Input.prompt({
+            message: "Enter comment",
+            suggestions: COMMENTS
+        });
+    }
 
     const docPath = getTimeEntriesMonthDocPath();
 
@@ -395,7 +408,7 @@ export const addTimeEntry = async (opts: { replica: Earthstar.Replica }) => {
     }
 
     const today = new Date();
-    const textWithTimeStamp = `${today.getTime()}\t${action}\t${tag}\t${comment}`;
+    const textWithTimeStamp = `${today.getTime()}\t${_action}\t${_tag}\t${_comment}`;
 
     let appendText = textWithTimeStamp;
 

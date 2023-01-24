@@ -48,11 +48,25 @@ await new Command()
     })
     // Sub commands
     .command("report", "Time Report")
-    .action(async (options: { share?: string }) => {
-        const { share } = options;
+    .option("-a, --action <action:string>", "Enter START or STOP")
+    .option("-t, --tag <tag:string>", "Enter the tag")
+    .option("-c, --comment <comment:string>", "Enter the comment")
+    .action(async (options: { share?: string, action?: string, tag?: string, comment?: string }) => {
+        const { share, action, tag, comment } = options;
         replica = await initReplica(share);
         const menuItems = setMenuItems({ settings, replica });
-        await menuItems.timeReport.action();
+        if (action) {
+            const entry: { action: string, tag?: string, comment?: string } = { action };
+            if (tag) {
+                entry.tag = tag;
+            }
+            if (comment) {
+                entry.comment = comment;
+            }
+            await menuItems.addTimeEntry.action(entry);
+        } else {
+            await menuItems.timeReport.action();
+        }
     })
     .command("journal", "Read journal")
     .option("-e, --edit <status:string>", "Sets the journal")

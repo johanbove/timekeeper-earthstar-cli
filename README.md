@@ -98,6 +98,7 @@ Each line in the path will consist of a tab separated time entry:
 - [x] Create command list time entries
 - [x] Create command delete multiple time entries
 - [x] Add parsing the list of existing tags to time entry command
+- [x] Create command to add time entry
 - [ ] Create command delete time entry
 - [ ] Create command edit time entry
 - [ ] Create command filter time entry by week

@@ -8,10 +8,16 @@ import { timeReport, addTimeEntry, readTimeEntries } from "./timeentries/index.t
 
 const SEPARATOR = { name: "separator", value: "--------" };
 
+interface Entry {
+    action: string;
+    tag?: string;
+    comment?: string;
+}
+
 interface SelectOptionWithAction extends SelectOption {
     name: string;
     value: string;
-    action: (opts?: string) => Promise<void | boolean | string> | string | boolean | void | number;
+    action: (opts?: string | Entry) => Promise<void | boolean | string> | string | boolean | void | number;
 }
 
 type SelectOptionWithoutAction = Omit<SelectOptionWithAction, "action">;
@@ -25,7 +31,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         addTimeEntry: {
             name: "Track entry",
             value: "addTimeEntry",
-            action: async () => await addTimeEntry({ replica })
+            action: async (entry?: Entry) => await addTimeEntry({ entry, replica })
         },
         timeReport: {
             name: "Time Report",
