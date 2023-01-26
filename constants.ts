@@ -1,6 +1,8 @@
+import { DateTime } from "npm:luxon@3";
+
 export const NAMESPACE = 'TimeKeeperV2';
 export const APPNAME = "timekeeper";
-export const VERSION = "1.5.0";
+export const VERSION = "1.6.0";
 export const DESCRIPTION = `
 This application gives you control over an Earthstar share.
 You can store any documents within the share.
@@ -32,3 +34,9 @@ export const TAGS = ['Deloitte','BMW','Counseling','Training'];
  * Temporary hard-coded until parsing from previous time entries works.
  */
 export const COMMENTS = ['Meeting','Travel'];
+
+export const DAYSOFTHEWEEK = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+
+export const thisYear = new Date().toLocaleString("default", { year: "2-digit" });
+export const thisWeekNumber = DateTime.now().weekNumber;
+export const thisWeekId = `${thisYear}/${thisWeekNumber}`;

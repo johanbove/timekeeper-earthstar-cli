@@ -99,6 +99,18 @@ await new Command()
             await menuItems.showStatus.action();
         }
     })
+    .command("timestamp", "Returns a timestamp")
+    .option("-d, --date <date:string>", "A date in format yyyy-mm-ddThh:mm")
+    .action(async (options: { share?: string, date?: string }) => {
+        const { share, date } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        if (date) {
+            menuItems.generateTimestamp.action(date);
+        } else {
+            menuItems.generateTimestamp.action();
+        }
+    })
     .command("reset", "Resets and clears the settings storage")
     .action(async () => {
         const confirmed: boolean = await Confirm.prompt("Please confirm you want to remove all stored settings");

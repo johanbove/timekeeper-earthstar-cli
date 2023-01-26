@@ -46,8 +46,14 @@ export const showSettings = (settings: Earthstar.SharedSettings) => {
     console.groupEnd();
 }
 
-export const generateTimestamp = () => {
-    const today = new Date();
+export const generateTimestamp = (date?: string) => {
+
+    let today = new Date();
+
+    if (date) {
+        today = new Date(date);
+    }
+
     console.group(`Unix timestamp for ${today.toLocaleString()}`);
     console.log(today.getTime());
     console.groupEnd();

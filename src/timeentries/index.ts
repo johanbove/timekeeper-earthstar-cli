@@ -35,7 +35,7 @@ interface TimeEntry {
     key: string,
     timestamp: Date,
     status: string,
-    action: Actions,
+    action: string | 'START' | 'STOP',
     durationMinutes: number,
     durationHours: number,
     previousDay: string | null,

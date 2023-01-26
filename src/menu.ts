@@ -17,7 +17,7 @@ interface Entry {
 interface SelectOptionWithAction extends SelectOption {
     name: string;
     value: string;
-    action: (opts?: string | Entry) => Promise<void | boolean | string> | string | boolean | void | number;
+    action: <T>(opts?: T) => void | Promise<T | void> | T | number;
 }
 
 type SelectOptionWithoutAction = Omit<SelectOptionWithAction, "action">;
@@ -31,7 +31,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         addTimeEntry: {
             name: "Track entry",
             value: "addTimeEntry",
-            action: async (entry?: Entry) => await addTimeEntry({ entry, replica })
+            action: async (entry?) => await addTimeEntry({ entry, replica } as { entry?: Entry, replica: Earthstar.Replica })
         },
         timeReport: {
             name: "Time Report",
@@ -46,7 +46,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         addJournal: {
             name: "Edit journal",
             value: "addJournal",
-            action: async (text?: string) => await journal.add({ text, replica })
+            action: async (text?) => await journal.add({ text, replica } as { text?: string, replica: Earthstar.Replica })
         },
         journal: {
             name: "Read journal",
@@ -96,7 +96,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         generateTimestamp: {
             name: "Generate time stamp",
             value: "generateTimestamp",
-            action: () => generateTimestamp()
+            action: (opts): number => generateTimestamp(opts as string)
         },
         setDisplayName: {
             name: "Set display name",
