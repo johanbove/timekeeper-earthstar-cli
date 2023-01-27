@@ -54,6 +54,38 @@ await new Command()
         await menu({ command, settings, replica });
     })
     // Sub commands
+    .command("start", "Start a time entry")
+    .option("-t, --tag <tag:string>", "Enter the tag")
+    .option("-c, --comment <comment:string>", "Enter the comment")
+    .action(async (options: { share?: string, action?: string, tag?: string, comment?: string }) => {
+        const { share, action = 'START', tag, comment } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        const entry: { action: string, tag?: string, comment?: string } = { action };
+        if (tag) {
+            entry.tag = tag;
+        }
+        if (comment) {
+            entry.comment = comment;
+        }
+        await menuItems.addTimeEntry.action(entry);
+    })
+    .command("stop", "Stop a time entry")
+    .option("-t, --tag <tag:string>", "Enter the tag")
+    .option("-c, --comment <comment:string>", "Enter the comment")
+    .action(async (options: { share?: string, action?: string, tag?: string, comment?: string }) => {
+        const { share, action = 'STOP', tag, comment } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        const entry: { action: string, tag?: string, comment?: string } = { action };
+        if (tag) {
+            entry.tag = tag;
+        }
+        if (comment) {
+            entry.comment = comment;
+        }
+        await menuItems.addTimeEntry.action(entry);
+    })
     .command("report", "Time Report")
     .option("-a, --action <action:string>", "Enter START or STOP")
     .option("-t, --tag <tag:string>", "Enter the tag")
