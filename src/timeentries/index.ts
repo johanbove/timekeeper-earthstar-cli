@@ -8,6 +8,8 @@ import { edit, read } from "../documents/index.ts";
 
 export enum actions { START = 'START', STOP = 'STOP' }
 
+const LOCALE = 'de';
+
 /**
  * This is equivalent to:
  * type Actions =  'START' | 'STOP';
@@ -134,7 +136,7 @@ const parseTimeEntries = (_data: EntryData, weekNumber?: number, year?: number) 
     /**
      * @example 22
      */
-    const currentYear = year || new Date().toLocaleString("default", { year: "2-digit" });
+    const currentYear = year || new Date().toLocaleString(LOCALE, { year: "2-digit" });
     const currentWeekNumber = weekNumber || DateTime.now().weekNumber;
     const currentWeekId = `${currentYear}/${currentWeekNumber}`;
 
@@ -160,7 +162,7 @@ const parseTimeEntries = (_data: EntryData, weekNumber?: number, year?: number) 
         let status = "tag";
 
         const weekNumber = DateTime.fromJSDate(timestamp).weekNumber;
-        const year = new Date(timestamp).toLocaleString("default", { year: "2-digit" });
+        const year = new Date(timestamp).toLocaleString(LOCALE, { year: "2-digit" });
         const weekId = `${year}/${weekNumber}`;
         const weekDay = DateTime.fromJSDate(timestamp).weekdayShort;
         const weekDayId = `${weekId}/${weekDay}`;
@@ -451,7 +453,7 @@ Time Report for ${docPath.split('/').slice(-1)}
         entries?.reverse().forEach((entry) => {
             const _entry = entry.split(/\t/);
             _data[parseInt(_entry[0], 10)] = { action: _entry[1], tag: _entry[2], comment: _entry[3]};
-            rows.push([new Date(parseInt(_entry[0], 10)).toLocaleString(), ..._entry.slice(1)]);
+            rows.push([new Date(parseInt(_entry[0], 10)).toLocaleString(LOCALE), ..._entry.slice(1)]);
         });
 
         const table: Table = Table.from(rows);
@@ -466,13 +468,21 @@ Time Report for ${docPath.split('/').slice(-1)}
     const parsedEntries = parseTimeEntries(_data as EntryData, weekNumber, year);
 
     console.group(`
-Rough Statistics
+This Week (${parsedEntries.thisWeekReportProps.currentWeekId})
+`);
+    // console.log('thisWeekReportProps', parsedEntries);
+    console.log('tagsPerDay', parsedEntries.thisWeekReportProps.tagsPerDay);
+    console.log('weekDays', parsedEntries?.thisWeekReportProps.weekDays);
+    console.log('tags', parsedEntries?.thisWeekReportProps.tags);
+    console.groupEnd();
+
+    console.group(`
+Statistics
 `);
     // console.log('parseTimeEntries', parsedEntries);
     console.log('weeks', parsedEntries?.statisticsProps.weeks);
     console.log('totalHours', parsedEntries?.statisticsProps.totalHours.toFixed(2));
     console.log('days', parsedEntries?.statisticsProps.days);
-    console.log('weekDays', parsedEntries?.thisWeekReportProps.weekDays);
     console.log(`
 ------------------
 `);
