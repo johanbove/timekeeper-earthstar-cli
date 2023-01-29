@@ -1,5 +1,7 @@
 import { Earthstar } from "../../deps.ts";
 
+export const formatDate = (date: Date) => date.toLocaleString("default");
+
 export const getDisplayName = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
     const { settings, replica } = opts;
     const docPath = `/about/~${settings.author?.address}/displayName`
