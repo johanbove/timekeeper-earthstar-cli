@@ -90,8 +90,9 @@ await new Command()
     .option("-a, --action <action:string>", "Enter START or STOP")
     .option("-t, --tag <tag:string>", "Enter the tag")
     .option("-c, --comment <comment:string>", "Enter the comment")
-    .action(async (options: { share?: string, action?: string, tag?: string, comment?: string }) => {
-        const { share, action, tag, comment } = options;
+    .option("-d, --docPath <docPath:string>", "Enter the doc path")
+    .action(async (options: { share?: string, action?: string, tag?: string, comment?: string, docPath?: string }) => {
+        const { share, action, tag, comment, docPath } = options;
         replica = await initReplica(share);
         const menuItems = setMenuItems({ settings, replica });
         if (action) {
@@ -104,7 +105,7 @@ await new Command()
             }
             await menuItems.addTimeEntry.action(entry);
         } else {
-            await menuItems.timeReport.action();
+            await menuItems.timeReport.action(docPath);
         }
     })
     .command("journal", "Read journal")

@@ -422,11 +422,13 @@ ${textWithTimeStamp}`;
     await edit({ replica, text: appendText, docPath });
 }
 
-export const timeReport = async (opts: { replica: Earthstar.Replica }) => {
-    const { replica } = opts;
-    const docPath = getTimeEntriesMonthDocPath();
+export const timeReport = async (opts: { docPath?: string, replica: Earthstar.Replica }) => {
+    const { replica, docPath } = opts;
 
-    const result = await replica.getLatestDocAtPath(docPath);
+    // checks files name is 2023-01
+    const _docPath = docPath && docPath.length && docPath.indexOf('-') === 4 ? `/entries/${docPath}` : getTimeEntriesMonthDocPath();
+
+    const result = await replica.getLatestDocAtPath(_docPath);
 
     if (Earthstar.isErr(result)) {
         console.log(result.message);
@@ -437,13 +439,15 @@ export const timeReport = async (opts: { replica: Earthstar.Replica }) => {
     const entries = result?.text.split(/\r?\n/).filter(element => element);
 
     console.group(`
-Time Report for ${docPath.split('/').slice(-1)}
+Time Report for ${_docPath.split('/').slice(-1)}
 `);
 
-    const weekNumber = DateTime.now().weekNumber;
-    const year = DateTime.now().year;
+    const _now = DateTime.now();
+    const today = _now.toLocaleString({ month: 'long', day: 'numeric', weekday: 'long' });
+    const currentWeekNumber = _now.weekNumber;
+    const currentYear = _now.year;
 
-    console.log(`We are in week ${weekNumber} of the year ${year}.
+    console.log(`Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear}.
 `);
 
     const _data: { [key: number]: unknown } = {};
@@ -453,25 +457,33 @@ Time Report for ${docPath.split('/').slice(-1)}
         entries?.reverse().forEach((entry) => {
             const _entry = entry.split(/\t/);
             _data[parseInt(_entry[0], 10)] = { action: _entry[1], tag: _entry[2], comment: _entry[3]};
-            rows.push([new Date(parseInt(_entry[0], 10)).toLocaleString(LOCALE), ..._entry.slice(1)]);
+            const _date = new Date(parseInt(_entry[0], 10));
+            const _weekId = `${_date.toLocaleString(LOCALE, { year: "2-digit" })}/${DateTime.fromJSDate(_date).weekNumber}`;
+            rows.push([_date.toLocaleString(LOCALE), _weekId, ..._entry.slice(1)]);
         });
 
-        const table: Table = Table.from(rows);
+        // const table: Table = Table.from(rows);
+        // console.log(table.toString());
 
-        console.log(table.toString());
+        new Table()
+            .header(["Time Stamp", "Week", "Action", "Tag", "Comment"])
+            .border(true)
+            .body(rows)
+            .render();
+
     } else {
         console.log('Document not found.');
     }
     console.groupEnd();
 
     // console.log('_data', _data);
-    const parsedEntries = parseTimeEntries(_data as EntryData, weekNumber, year);
+    const parsedEntries = parseTimeEntries(_data as EntryData, currentWeekNumber, currentYear);
 
     console.group(`
-This Week (${parsedEntries.thisWeekReportProps.currentWeekId})
+This Week (${parsedEntries?.thisWeekReportProps.currentWeekId})
 `);
     // console.log('thisWeekReportProps', parsedEntries);
-    console.log('tagsPerDay', parsedEntries.thisWeekReportProps.tagsPerDay);
+    console.log('tagsPerDay', parsedEntries?.thisWeekReportProps.tagsPerDay);
     console.log('weekDays', parsedEntries?.thisWeekReportProps.weekDays);
     console.log('tags', parsedEntries?.thisWeekReportProps.tags);
     console.groupEnd();
