@@ -122,6 +122,23 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
             value: "settings",
             action: () => showSettings(settings)
         },
+        sync_dir: {
+            name: "Sync dir",
+            value: "sync_dir",
+            action: async () => {
+                const dirPath = './data'
+
+                await Earthstar.syncReplicaAndFsDir({
+                    replica,
+                    dirPath,
+                    keypair: settings.author as Earthstar.AuthorKeypair,
+                    allowDirtyDirWithoutManifest: true,
+                    overwriteFilesAtOwnedPaths: true,
+                });
+
+                console.log(`Synced ${replica.share} with ${dirPath}`);
+            }
+        },
     }
 };
 
@@ -148,12 +165,16 @@ export const menu = async (opts: { command?: string, settings: Earthstar.SharedS
         SEPARATOR,
         menuItems.showStatus,
         menuItems.setStatus,
+        menuItems.showPlan,
+        menuItems.showProject,
         SEPARATOR,
         menuItems.editADocument,
         menuItems.readADocument,
         menuItems.removeDocument,
         menuItems.listPaths,
         menuItems.listDocuments,
+        SEPARATOR,
+        menuItems.sync_dir,
         SEPARATOR,
         menuItems.generateTimestamp,
         menuItems.setDisplayName,

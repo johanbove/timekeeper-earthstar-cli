@@ -166,22 +166,12 @@ await new Command()
             settings.clear();
         }
     })
-    .command("sync_dir", "Syncs the share contents with a local drive")
+    .command("sync:dir", "Syncs the share contents with a local drive")
     .action(async (options: { share?: string }) => {
         const { share } = options;
         replica = await initReplica(share);
-
-        const dirPath = './data'
-
-        await Earthstar.syncReplicaAndFsDir({
-            replica,
-            dirPath,
-            keypair: settings.author as Earthstar.AuthorKeypair,
-            allowDirtyDirWithoutManifest: true,
-            overwriteFilesAtOwnedPaths: true,
-        });
-
-        console.log(`Synced ${replica.share} with ${dirPath}`);
+        const menuItems = setMenuItems({ settings, replica });
+        await menuItems.sync_dir.action();
     })
     .parse(Deno.args);
 
