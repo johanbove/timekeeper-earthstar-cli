@@ -84,5 +84,5 @@ export const showProject = async (opts: { settings: Earthstar.SharedSettings, re
 }
 
 export const showStatus = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
-    return await showAboutDoc({ docPath: 'about', ...opts });
+    return await showAboutDoc({ docPath: 'status', ...opts });
 }

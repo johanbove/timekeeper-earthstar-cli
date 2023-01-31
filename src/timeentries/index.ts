@@ -438,43 +438,32 @@ export const timeReport = async (opts: { docPath?: string, replica: Earthstar.Re
     // Removes potential empty new lines using the .filter()
     const entries = result?.text.split(/\r?\n/).filter(element => element);
 
-    console.group(`
-Time Report for ${_docPath.split('/').slice(-1)}
-`);
-
     const _now = DateTime.now();
     const today = _now.toLocaleString({ month: 'long', day: 'numeric', weekday: 'long' });
     const currentWeekNumber = _now.weekNumber;
     const currentYear = _now.year;
 
-    console.log(`Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear}.
+    console.log(`
+Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear}.
 `);
 
     const _data: { [key: number]: unknown } = {};
-
+    const timeEntries: Array<string>[] = [];
+    
     if (entries?.length) {
-        const rows: Array<string>[] = [];
         entries?.reverse().forEach((entry) => {
             const _entry = entry.split(/\t/);
+            // Creates the structure required for the parsing into reports later on
             _data[parseInt(_entry[0], 10)] = { action: _entry[1], tag: _entry[2], comment: _entry[3]};
+            // This is for showing the time entries in a nice table
             const _date = new Date(parseInt(_entry[0], 10));
             const _weekId = `${_date.toLocaleString(LOCALE, { year: "2-digit" })}/${DateTime.fromJSDate(_date).weekNumber}`;
-            rows.push([_date.toLocaleString(LOCALE), _weekId, ..._entry.slice(1)]);
+            timeEntries.push([_date.toLocaleString(LOCALE), _weekId, ..._entry.slice(1)]);
         });
 
         // const table: Table = Table.from(rows);
         // console.log(table.toString());
-
-        new Table()
-            .header(["Time Stamp", "Week", "Action", "Tag", "Comment"])
-            .border(true)
-            .body(rows)
-            .render();
-
-    } else {
-        console.log('Document not found.');
     }
-    console.groupEnd();
 
     // console.log('_data', _data);
     const parsedEntries = parseTimeEntries(_data as EntryData, currentWeekNumber, currentYear);
@@ -499,4 +488,25 @@ Statistics
 ------------------
 `);
     console.groupEnd();
+
+    console.group(`
+Data
+
+    There were ${timeEntries.length} entries in the file: ${_docPath.split('/').slice(-1)}
+`);
+
+    if (timeEntries.length) {
+        new Table()
+        .header(["Time Stamp", "Week", "Action", "Tag", "Comment"])
+        .border(true)
+        .body(timeEntries)
+        .render();
+    }
+
+    console.groupEnd();
+
+console.log(`
+------------------
+`);
+
 }
