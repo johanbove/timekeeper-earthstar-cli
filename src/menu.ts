@@ -66,7 +66,21 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         setStatus: {
             name: "Set status",
             value: "setStatus",
-            action: async (status?: string) => await profile.setStatus({ status, settings, replica })
+            action: async (status?: string) => await profile.setStatus({ status, settings, replica } as {
+                status?: string;
+                settings: Earthstar.SharedSettings;
+                replica: Earthstar.Replica;
+            })
+        },
+        showPlan: {
+            name: "Show plan",
+            value: "showPlan",
+            action: async () => await profile.showPlan({ settings, replica })
+        },
+        showProject: {
+            name: "Show project",
+            value: "showProject",
+            action: async () => await profile.showProject({ settings, replica })
         },
         editADocument: {
             name: "Edit a document",

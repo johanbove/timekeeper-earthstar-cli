@@ -144,6 +144,20 @@ await new Command()
             menuItems.generateTimestamp.action();
         }
     })
+    .command("plan", "Shows the current plan")
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        await menuItems.showPlan.action();
+    })
+    .command("project", "Shows the current project")
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+        const menuItems = setMenuItems({ settings, replica });
+        await menuItems.showProject.action();
+    })
     .command("reset", "Resets and clears the settings storage")
     .action(async () => {
         const confirmed: boolean = await Confirm.prompt("Please confirm you want to remove all stored settings");
@@ -151,6 +165,23 @@ await new Command()
             console.log('Clearing settings:', settings);
             settings.clear();
         }
+    })
+    .command("sync_dir", "Syncs the share contents with a local drive")
+    .action(async (options: { share?: string }) => {
+        const { share } = options;
+        replica = await initReplica(share);
+
+        const dirPath = './data'
+
+        await Earthstar.syncReplicaAndFsDir({
+            replica,
+            dirPath,
+            keypair: settings.author as Earthstar.AuthorKeypair,
+            allowDirtyDirWithoutManifest: true,
+            overwriteFilesAtOwnedPaths: true,
+        });
+
+        console.log(`Synced ${replica.share} with ${dirPath}`);
     })
     .parse(Deno.args);
 

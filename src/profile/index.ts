@@ -1,4 +1,5 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
+const LOCALE = 'DE';
 
 export const setDisplayName = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
     const { replica, settings } = opts;
@@ -52,10 +53,10 @@ export const setStatus = async (opts: { status?: string, settings: Earthstar.Sha
     }
 }
 
-export const showStatus = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
-    const { replica, settings } = opts;
-    const docPath = `/about/~${settings.author?.address}/status`
-    const result = await replica.getLatestDocAtPath(docPath);
+const showAboutDoc = async (opts: { docPath?: string, settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
+    const { replica, settings, docPath = 'about' } = opts;
+    const _docPath = `/about/~${settings.author?.address}/${docPath}`
+    const result = await replica.getLatestDocAtPath(_docPath);
 
     if (Earthstar.isErr(result)) {
         console.log(result.message);
@@ -65,11 +66,23 @@ export const showStatus = async (opts: { settings: Earthstar.SharedSettings, rep
     console.group(docPath);
     if (result) {
         const table: Table = new Table(
-            [new Date(result?.timestamp / 1000).toLocaleString(), result?.text],
+            [new Date(result?.timestamp / 1000).toLocaleString(LOCALE), result?.text],
         );
         console.log(table.toString());
     } else {
         console.log('Document not found.');
     }
     console.groupEnd();
+}
+
+export const showPlan = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
+    return await showAboutDoc({ docPath: 'plan', ...opts });
+}
+
+export const showProject = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
+    return await showAboutDoc({ docPath: 'project', ...opts });
+}
+
+export const showStatus = async (opts: { settings: Earthstar.SharedSettings, replica: Earthstar.Replica }) => {
+    return await showAboutDoc({ docPath: 'about', ...opts });
 }
