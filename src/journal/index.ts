@@ -44,8 +44,8 @@ export const check = async (opts: { replica: Earthstar.Replica }) => {
     await read({ replica, docPath });
 }
 
-export const list = async (opts: { replica: Earthstar.Replica }) => {
-    const { replica } = opts;
+export const list = async (opts: { replica: Earthstar.Replica, settings: Earthstar.SharedSettings }) => {
+    const { replica, settings } = opts;
     const docPath = getJournalMonthDocPath();
 
     const result = await replica.getLatestDocAtPath(docPath);
@@ -53,6 +53,24 @@ export const list = async (opts: { replica: Earthstar.Replica }) => {
     if (Earthstar.isErr(result)) {
         console.log(result.message);
         Deno.exit(1);
+    }
+
+    if (!result) {
+        console.log(`Creating new month entry for ${getJournalMonthDocPath()}...`);
+
+        if (!settings.author) {
+            throw new Error('Please authenticate with a valid author first.');
+        }
+
+        const create = await replica.set(settings.author as Earthstar.AuthorKeypair, {
+            path: getJournalMonthDocPath(),
+            text: '',
+        });
+
+        if (Earthstar.isErr(create)) {
+            console.log(create.message);
+            Deno.exit(1);
+        }
     }
 
     // Removes potential empty new lines using the .filter()

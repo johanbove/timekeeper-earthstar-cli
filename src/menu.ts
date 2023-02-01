@@ -36,7 +36,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         timeReport: {
             name: "Time Report",
             value: "timeReport",
-            action: async (docPath?) => await timeReport({ replica, docPath } as { replica: Earthstar.Replica, docPath?: string })
+            action: async (docPath?) => await timeReport({ replica, docPath, settings } as { replica: Earthstar.Replica, docPath?: string, settings: Earthstar.SharedSettings })
         },
         readTimeEntries: {
             name: "Check time entries",
@@ -51,7 +51,7 @@ export const setMenuItems = (opts: { settings: Earthstar.SharedSettings, replica
         journal: {
             name: "Read journal",
             value: "journal",
-            action: async () => await journal.list({ replica })
+            action: async () => await journal.list({ replica, settings })
         },
         checkJournal: {
             name: "Check journal",

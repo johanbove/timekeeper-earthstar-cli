@@ -422,8 +422,8 @@ ${textWithTimeStamp}`;
     await edit({ replica, text: appendText, docPath });
 }
 
-export const timeReport = async (opts: { docPath?: string, replica: Earthstar.Replica }) => {
-    const { replica, docPath } = opts;
+export const timeReport = async (opts: { docPath?: string, replica: Earthstar.Replica, settings: Earthstar.SharedSettings }) => {
+    const { replica, docPath, settings } = opts;
 
     // checks files name is 2023-01
     const _docPath = docPath && docPath.length && docPath.indexOf('-') === 4 ? `/entries/${docPath}` : getTimeEntriesMonthDocPath();
@@ -433,6 +433,25 @@ export const timeReport = async (opts: { docPath?: string, replica: Earthstar.Re
     if (Earthstar.isErr(result)) {
         console.log(result.message);
         Deno.exit(1);
+    }
+
+    // If we don't have a file, we should create it.
+    if (!result) {
+        console.log(`Creating new month entry for ${getTimeEntriesMonthDocPath()}...`);
+
+        if (!settings.author) {
+            throw new Error('Please authenticate with a valid author first.');
+        }
+
+        const create = await replica.set(settings.author as Earthstar.AuthorKeypair, {
+            path: getTimeEntriesMonthDocPath(),
+            text: '',
+        });
+
+        if (Earthstar.isErr(create)) {
+            console.log(create.message);
+            Deno.exit(1);
+        }
     }
 
     // Removes potential empty new lines using the .filter()
