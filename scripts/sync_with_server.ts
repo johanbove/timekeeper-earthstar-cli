@@ -48,7 +48,6 @@ syncer.onStatusChange((newStatus) => {
   let transfersInProgress = 0;
 
   try {
-
     for (const share in newStatus) {
       const shareStatus = newStatus[share];
 
@@ -68,7 +67,6 @@ syncer.onStatusChange((newStatus) => {
         Object.keys(newStatus).length
       } shares, got ${allReceivedDocs}/${allRequestedDocs}, sent ${allSentDocs}, ${transfersInProgress} attachment transfers in progress.`,
     );
-
   } catch (error) {
     console.error(error);
   }
