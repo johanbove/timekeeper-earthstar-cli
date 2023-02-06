@@ -529,7 +529,7 @@ Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear
         DateTime.fromJSDate(_date).weekNumber
       }`;
       timeEntries.push([
-        _date.toLocaleString(LOCALE),
+        _date.toLocaleString(LOCALE, { weekday: 'short', year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
         _weekId,
         ..._entry.slice(1),
       ]);
