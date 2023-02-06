@@ -46,6 +46,7 @@ await new Command()
   .meta("deno", Deno.version.deno)
   .meta("v8", Deno.version.v8)
   .meta("typescript", Deno.version.typescript)
+  .meta("license", "See LICENSE")
   .globalOption("-s, --share <share:string>", "Set the Earthstar share address")
   // Main Action generates the menu
   .action(async (options: { share?: string }) => {

@@ -5,8 +5,13 @@ export const APPNAME = "timekeeper";
 export const VERSION = "1.9.0";
 export const DESCRIPTION = `
 This application gives you control over an Earthstar share.
+
+> What is Earthstar? <http://earthstar-project.org>
+
 You can store any documents within the share.
+
 This app is specifically designed to keep track of projects.
+
 When you first install the app you will need to do two things.
 
     1. Create a new Earthstar author or enter an existing author address and secret.
@@ -30,6 +35,22 @@ When you restart the app after adding your credentials and share address you wil
 See the "./scripts" folder for utility scripts that allow you to work with the Earthstar star.
 
 This application comes with absolutely no warranty! Use at your own risk.
+
+Timekeeper Earthstar CLI
+Copyright (C) 2023 Johan Bové
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 `;
 /**
