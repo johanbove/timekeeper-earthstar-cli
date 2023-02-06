@@ -57,6 +57,7 @@ await new Command()
   .command("start", "Start a time entry")
   .option("-t, --tag <tag:string>", "Enter the tag")
   .option("-c, --comment <comment:string>", "Enter the comment")
+  .option("-d, --timestamp <timestamp:string>", "Enter a timestamp")
   .action(
     async (
       options: {
@@ -64,12 +65,13 @@ await new Command()
         action?: string;
         tag?: string;
         comment?: string;
+        timestamp?: string;
       },
     ) => {
-      const { share, action = "START", tag, comment } = options;
+      const { share, action = "START", tag, comment, timestamp } = options;
       replica = await initReplica(share);
       const menuItems = setMenuItems({ settings, replica });
-      const entry: { action: string; tag?: string; comment?: string } = {
+      const entry: { action: string; tag?: string; comment?: string, timestamp?: Date } = {
         action,
       };
       if (tag) {
@@ -77,6 +79,9 @@ await new Command()
       }
       if (comment) {
         entry.comment = comment;
+      }
+      if (timestamp) {
+        entry.timestamp = new Date(timestamp)
       }
       await menuItems.addTimeEntry.action(entry);
     },
@@ -84,6 +89,7 @@ await new Command()
   .command("stop", "Stop a time entry")
   .option("-t, --tag <tag:string>", "Enter the tag")
   .option("-c, --comment <comment:string>", "Enter the comment")
+  .option("-d, --timestamp <timestamp:string>", "Enter a timestamp")
   .action(
     async (
       options: {
@@ -91,12 +97,13 @@ await new Command()
         action?: string;
         tag?: string;
         comment?: string;
+        timestamp?: string;
       },
     ) => {
-      const { share, action = "STOP", tag, comment } = options;
+      const { share, action = "STOP", tag, comment, timestamp } = options;
       replica = await initReplica(share);
       const menuItems = setMenuItems({ settings, replica });
-      const entry: { action: string; tag?: string; comment?: string } = {
+      const entry: { action: string; tag?: string; comment?: string, timestamp?: Date } = {
         action,
       };
       if (tag) {
@@ -104,6 +111,9 @@ await new Command()
       }
       if (comment) {
         entry.comment = comment;
+      }
+      if (timestamp) {
+        entry.timestamp = new Date(timestamp)
       }
       await menuItems.addTimeEntry.action(entry);
     },

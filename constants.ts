@@ -2,7 +2,7 @@ import { DateTime } from "npm:luxon@3";
 
 export const NAMESPACE = "TimeKeeperV2";
 export const APPNAME = "timekeeper";
-export const VERSION = "1.8.0";
+export const VERSION = "1.9.0";
 export const DESCRIPTION = `
 This application gives you control over an Earthstar share.
 You can store any documents within the share.

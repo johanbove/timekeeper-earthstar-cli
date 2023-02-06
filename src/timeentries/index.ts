@@ -55,6 +55,7 @@ interface Entry {
   action: string;
   tag?: string;
   comment?: string;
+  timestamp?: Date;
 }
 
 interface EntryData {
@@ -388,11 +389,14 @@ export const addTimeEntry = async (
 ) => {
   const { replica, entry } = opts;
 
-  const { action, tag, comment } = entry || {};
+  const { action, tag, comment, timestamp } = entry || {};
+
+  const today = new Date();
 
   let _action: string | undefined = action;
   let _tag: string | undefined = tag;
   let _comment: string | undefined = comment;
+  const _timestamp: number | undefined = timestamp ? timestamp.getTime() : today.getTime();
 
   if (!action || (action !== "START" && action !== "STOP")) {
     _action = await Select.prompt({
@@ -436,9 +440,8 @@ export const addTimeEntry = async (
     return;
   }
 
-  const today = new Date();
   const textWithTimeStamp =
-    `${today.getTime()}\t${_action}\t${_tag}\t${_comment}`;
+    `${_timestamp}\t${_action}\t${_tag}\t${_comment}`;
 
   let appendText = textWithTimeStamp;
 

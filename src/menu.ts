@@ -16,6 +16,7 @@ interface Entry {
   action: string;
   tag?: string;
   comment?: string;
+  timestamp?: string;
 }
 
 interface SelectOptionWithAction extends SelectOption {
