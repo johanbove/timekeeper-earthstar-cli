@@ -67,7 +67,83 @@ Each line in the path will consist of a tab separated time entry:
 
     {timestamp}\t{entry}
 
+## Usage
+
+All commands require the Earthstar to be predefined using the "`-s`" parameter. If the share is unknown, the application will show the list of know known shares to save the data in.
+
+> **TIP** Get all commands using the `timekeeper -h` command.
+
+You can set the "status" directly through the command line:
+
+  deno run -A ./timekeeper.ts status -s +test1.biyrxx....  -e "Checking out Timekeeper cli"
+
+You can add a "time entry" through the command line:
+
+  deno run -A ./timekeeper.ts start -s +test1.biyrxx....  -t "TEST" -c "Testing Timekeeper cli"
+
+Reading the journal:
+
+    deno run -A timekeeper.ts -s +test1.biyrxx.... journal
+
+Setting the status from the command line:
+
+    deno run -A timekeeper.ts -s +test1.biyrxx.... status -e "Happy that it worked"
+
+
+> **NOTE**  Escape special characters like "!". Escape with a back slash, eg. `\!`
+
+It is possible to use "timekeeper" after creating an alias in your terminal, for quicker access.
+
+For example:
+
+```bash
+$ which timekeeper
+$ timekeeper: aliased to deno run -A ~/Dev/EarthstarProject/timekeeper-earthstar-cli/timekeeper.ts -s +test1.biyrxx...
+```
+
+### Example bash aliases
+
+Add these to your `~/.profile` file for quick ways of working with cli.
+
+Note that we have predefined the share _+test1.biyrxx72..._ to be the active one for all our further commands.
+
+```bash
+export timekeeperclidir=~/Dev/EarthstarProject/timekeeper-earthstar-cli/
+alias timekeeper='deno run -A $timekeeperclidir/timekeeper.ts -s +test1.biyrxx72...'
+alias tjournal='timekeeper journal'
+alias tstatus='timekeeper status'
+alias tstart='timekeeper start'
+alias tstop='timekeeper stop'
+alias tsync='timekeeper sync:dir'
+alias treport='timekeeper report'
+alias tsyncs='deno run -A $timekeeperclidir/scripts/sync_all.ts'
+```
+
+It is now possible to call the sync right from Timekeeper itself.
+
+    $ timekeeper sync:dir
+
+This will copy all files to the "./data" folder.
+
+### Running the user scripts
+
+Sync with the local file system:
+
+    deno run -A ./scripts/sync_dir.ts  
+
+Sync with the server:
+
+    deno run -A ./scripts/sync_with_server.ts
+
+Sync with all servers:
+
+    deno run -A ./scripts/sync_all.ts
+
 ## Journal
+
+## 2023-02-07, Tuesday
+
+- Updates to this documentation and some new additions to the command line have appeared.
 
 ## 2022-01-24, Tuesday
 
