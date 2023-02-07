@@ -532,6 +532,7 @@ Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear
         DateTime.fromJSDate(_date).weekNumber
       }`;
       timeEntries.push([
+        _entry[0],
         _date.toLocaleString(LOCALE, { weekday: 'short', year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
         _weekId,
         ..._entry.slice(1),
@@ -583,7 +584,7 @@ Data
 
   if (timeEntries.length) {
     new Table()
-      .header(["Time Stamp", "Week", "Action", "Tag", "Comment"])
+      .header(["Timestamp", "Date & Time", "Week", "Action", "Tag", "Comment"])
       .border(true)
       .body(timeEntries)
       .render();
