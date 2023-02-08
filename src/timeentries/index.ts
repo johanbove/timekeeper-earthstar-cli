@@ -5,13 +5,12 @@ import { COMMENTS, TAGS } from "../../constants.ts";
 import { Earthstar, Input, Select, Table } from "../../deps.ts";
 import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
+import { LOCALE} from "../../constants.ts";
 
 export enum actions {
   START = "START",
   STOP = "STOP",
 }
-
-const LOCALE = "de";
 
 /**
  * This is equivalent to:

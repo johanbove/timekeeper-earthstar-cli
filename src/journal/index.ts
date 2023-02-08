@@ -1,6 +1,7 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
 import { getJournalMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
+import { LOCALE} from "../../constants.ts";
 
 const LIMIT = 5;
 
@@ -95,7 +96,7 @@ Showing ${LIMIT} of ${entries?.length} entries.
     _entries.forEach((entry) => {
       const _entry = entry.split(/\t/);
       rows.push([
-        new Date(parseInt(_entry[0], 10)).toLocaleString(),
+        new Date(parseInt(_entry[0], 10)).toLocaleString(LOCALE),
         ..._entry.slice(1),
       ]);
     });

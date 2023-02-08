@@ -1,5 +1,5 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
-const LOCALE = "DE";
+import { LOCALE} from "../../constants.ts";
 
 export const setDisplayName = async (
   opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica },

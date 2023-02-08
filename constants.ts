@@ -1,5 +1,6 @@
 import { DateTime } from "npm:luxon@3";
 
+export const LOCALE = 'de'; // Used for date formatting
 export const NAMESPACE = "TimeKeeperV2";
 export const APPNAME = "timekeeper";
 export const VERSION = "1.9.0";
