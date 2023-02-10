@@ -1,5 +1,10 @@
 import { Earthstar } from "../../deps.ts";
-import { LOCALE, ABOUT_FOLDER, ENTRIES_FOLDER, JOURNAL_FOLDER } from "../../constants.ts";
+import {
+  ABOUT_FOLDER,
+  ENTRIES_FOLDER,
+  JOURNAL_FOLDER,
+  LOCALE,
+} from "../../constants.ts";
 
 export const formatDate = (date: Date) => date.toLocaleString("default");
 

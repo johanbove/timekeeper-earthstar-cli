@@ -1,7 +1,7 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
 import { getJournalMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
-import { LOCALE} from "../../constants.ts";
+import { LOCALE } from "../../constants.ts";
 
 const LIMIT = 5;
 
@@ -48,11 +48,15 @@ export const check = async (opts: { replica: Earthstar.Replica }) => {
 };
 
 export const list = async (
-  opts: { replica: Earthstar.Replica; settings: Earthstar.SharedSettings, limit?: number },
+  opts: {
+    replica: Earthstar.Replica;
+    settings: Earthstar.SharedSettings;
+    limit?: number;
+  },
 ) => {
   const { replica, settings, limit } = opts;
 
-  const _limit = typeof limit !== 'undefined' ? limit : LIMIT;
+  const _limit = typeof limit !== "undefined" ? limit : LIMIT;
 
   const docPath = getJournalMonthDocPath();
 

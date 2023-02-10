@@ -5,7 +5,11 @@ import { COMMENTS, TAGS } from "../../constants.ts";
 import { Earthstar, Input, Select, Table } from "../../deps.ts";
 import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
-import { LOCALE, ENTRIES_FOLDER } from "../../constants.ts";
+import { ENTRIES_FOLDER, LOCALE } from "../../constants.ts";
+
+const HR = `
+------------------
+`;
 
 export enum actions {
   START = "START",
@@ -16,7 +20,7 @@ export enum actions {
  * This is equivalent to:
  * type Actions =  'START' | 'STOP';
  */
-type Actions = keyof typeof actions;
+// type Actions = keyof typeof actions;
 
 interface TimeSeriesEntry {
   [key: string]: { duration: number };
@@ -395,7 +399,9 @@ export const addTimeEntry = async (
   let _action: string | undefined = action;
   let _tag: string | undefined = tag;
   let _comment: string | undefined = comment;
-  const _timestamp: number | undefined = timestamp ? timestamp.getTime() : today.getTime();
+  const _timestamp: number | undefined = timestamp
+    ? timestamp.getTime()
+    : today.getTime();
 
   if (!action || (action !== "START" && action !== "STOP")) {
     _action = await Select.prompt({
@@ -439,8 +445,7 @@ export const addTimeEntry = async (
     return;
   }
 
-  const textWithTimeStamp =
-    `${_timestamp}\t${_action}\t${_tag}\t${_comment}`;
+  const textWithTimeStamp = `${_timestamp}\t${_action}\t${_tag}\t${_comment}`;
 
   let appendText = textWithTimeStamp;
 
@@ -476,7 +481,8 @@ export const timeReport = async (
   // If we don't have a file, we should create it.
   if (!result) {
     console.log(
-      `Creating new month entry for ${getTimeEntriesMonthDocPath()}...`,
+      `Creating new month entry for %s ...`,
+      getTimeEntriesMonthDocPath(),
     );
 
     if (!settings.author) {
@@ -501,17 +507,23 @@ export const timeReport = async (
   const entries = result?.text.split(/\r?\n/).filter((element) => element);
 
   const _now = DateTime.now();
-  const today = _now.toLocaleString(LOCALE, {
+  const today = _now.setLocale(LOCALE).toLocaleString({
+    weekday: "long",
+    year: "numeric",
     month: "long",
     day: "numeric",
-    weekday: "long",
   });
   const currentWeekNumber = _now.weekNumber;
   const currentYear = _now.year;
 
-  console.log(`
-Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear}.
-`);
+  console.log(
+    `
+Today is %s. We are in week %s of the year %s.
+`,
+    today,
+    currentWeekNumber,
+    currentYear,
+  );
 
   const _data: { [key: number]: unknown } = {};
   const timeEntries: Array<string>[] = [];
@@ -532,7 +544,14 @@ Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear
       }`;
       timeEntries.push([
         _entry[0],
-        _date.toLocaleString(LOCALE, { weekday: 'short', year: '2-digit', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        _date.toLocaleString(LOCALE, {
+          weekday: "short",
+          year: "2-digit",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         _weekId,
         ..._entry.slice(1),
       ]);
@@ -549,9 +568,13 @@ Today is ${today}. We are in week ${currentWeekNumber} of the year ${currentYear
     currentYear,
   );
 
-  console.group(`
-This Week (${parsedEntries?.thisWeekReportProps.currentWeekId})
-`);
+  console.group(
+    `
+This Week (%s)
+`,
+    parsedEntries?.thisWeekReportProps.currentWeekId,
+  );
+
   // console.log('thisWeekReportProps', parsedEntries);
   console.log("tagsPerDay", parsedEntries?.thisWeekReportProps.tagsPerDay);
   console.log("weekDays", parsedEntries?.thisWeekReportProps.weekDays);
@@ -568,18 +591,18 @@ Statistics
     parsedEntries?.statisticsProps.totalHours.toFixed(2),
   );
   console.log("days", parsedEntries?.statisticsProps.days);
-  console.log(`
-------------------
-`);
+  console.log(HR);
   console.groupEnd();
 
-  console.group(`
+  console.group(
+    `
 Data
 
-    There were ${timeEntries.length} entries in the file: ${
-    _docPath.split("/").slice(-1)
-  }
-`);
+    There were %s entries in the file: %s
+`,
+    timeEntries.length,
+    _docPath.split("/").slice(-1),
+  );
 
   if (timeEntries.length) {
     new Table()
@@ -591,7 +614,5 @@ Data
 
   console.groupEnd();
 
-  console.log(`
-------------------
-`);
+  console.log(HR);
 };

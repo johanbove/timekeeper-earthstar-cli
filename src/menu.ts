@@ -71,7 +71,14 @@ export const setMenuItems = (
     journal: {
       name: "Read journal",
       value: "journal",
-      action: async (limit) => await journal.list({ replica, settings, limit } as { replica: Earthstar.Replica, settings: Earthstar.SharedSettings, limit : number }),
+      action: async (limit) =>
+        await journal.list(
+          { replica, settings, limit } as {
+            replica: Earthstar.Replica;
+            settings: Earthstar.SharedSettings;
+            limit: number;
+          },
+        ),
     },
     checkJournal: {
       name: "Check journal",

@@ -1,12 +1,12 @@
 import { DateTime } from "npm:luxon@3";
 
-export const LOCALE = 'de'; // Used for date formatting
+export const LOCALE = "de-DE"; // Used for date formatting
 export const NAMESPACE = "TimeKeeperV2";
 export const APPNAME = "timekeeper";
 export const VERSION = "1.11.0";
-export const FORMAT_VERSION = '1.0';
+export const FORMAT_VERSION = "1.0";
 
-export const FORMAT_ABOUT_VERSION = '1.0';
+export const FORMAT_ABOUT_VERSION = "1.0";
 export const ABOUT_FOLDER = `/about/${FORMAT_ABOUT_VERSION}/`;
 
 export const ENTRIES_FOLDER = `/${APPNAME}/${FORMAT_VERSION}/entries/`;

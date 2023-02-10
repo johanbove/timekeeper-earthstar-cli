@@ -36,7 +36,8 @@ The path format of a time entry document is:
 
 ### Time entries document fields
 
-The `text` property of the document is the list of entries. It can be any UTF-8 string.
+The `text` property of the document is the list of entries. It can be any UTF-8
+string.
 
 ## Journal entries
 
@@ -56,4 +57,5 @@ The path format of a journal entry document is:
 
 ### Journal entries document fields
 
-The `text` property of the document is the list of entries. It can be any UTF-8 string.
+The `text` property of the document is the list of entries. It can be any UTF-8
+string.

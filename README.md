@@ -73,17 +73,21 @@ Each line in the path will consist of a tab separated time entry:
 
 ## Usage
 
-All commands require the Earthstar to be predefined using the "`-s`" parameter. If the share is unknown, the application will show the list of know known shares to save the data in.
+All commands require the Earthstar to be predefined using the "`-s`" parameter.
+If the share is unknown, the application will show the list of know known shares
+to save the data in.
 
 > **TIP** Get all commands using the `timekeeper -h` command.
 
 You can set the "status" directly through the command line:
 
-  deno run -A ./timekeeper.ts status -s +test1.biyrxx....  -e "Checking out Timekeeper cli"
+deno run -A ./timekeeper.ts status -s +test1.biyrxx.... -e "Checking out
+Timekeeper cli"
 
 You can add a "time entry" through the command line:
 
-  deno run -A ./timekeeper.ts start -s +test1.biyrxx....  -t "TEST" -c "Testing Timekeeper cli"
+deno run -A ./timekeeper.ts start -s +test1.biyrxx.... -t "TEST" -c "Testing
+Timekeeper cli"
 
 Reading the journal:
 
@@ -93,10 +97,11 @@ Setting the status from the command line:
 
     deno run -A timekeeper.ts -s +test1.biyrxx.... status -e "Happy that it worked"
 
+> **NOTE** Escape special characters like "!". Escape with a back slash, eg.
+> `\!`
 
-> **NOTE**  Escape special characters like "!". Escape with a back slash, eg. `\!`
-
-It is possible to use "timekeeper" after creating an alias in your terminal, for quicker access.
+It is possible to use "timekeeper" after creating an alias in your terminal, for
+quicker access.
 
 For example:
 
@@ -109,7 +114,8 @@ $ timekeeper: aliased to deno run -A ~/Dev/EarthstarProject/timekeeper-earthstar
 
 Add these to your `~/.profile` file for quick ways of working with cli.
 
-Note that we have predefined the share _+test1.biyrxx72..._ to be the active one for all our further commands.
+Note that we have predefined the share _+test1.biyrxx72..._ to be the active one
+for all our further commands.
 
 ```bash
 export timekeeperclidir=~/Dev/EarthstarProject/timekeeper-earthstar-cli/
@@ -133,7 +139,7 @@ This will copy all files to the "./data" folder.
 
 Sync with the local file system:
 
-    deno run -A ./scripts/sync_dir.ts  
+    deno run -A ./scripts/sync_dir.ts
 
 Sync with the server:
 
@@ -147,13 +153,16 @@ Sync with all servers:
 
 ## 2023-02-10, Friday
 
-- Now following the correct ["about"](https://github.com/earthstar-project/application-formats/blob/main/formats/about/SPEC_1.0.md) [format spec](https://github.com/earthstar-project/application-formats).
+- Now following the correct
+  ["about"](https://github.com/earthstar-project/application-formats/blob/main/formats/about/SPEC_1.0.md)
+  [format spec](https://github.com/earthstar-project/application-formats).
 - Introduces the ["timekeeper" format spec version 1.0](./SPEC_1.0.md).
 - This will change the structure of your existing timekeeper data.
 
 ## 2023-02-07, Tuesday
 
-- Updates to this documentation and some new additions to the command line have appeared.
+- Updates to this documentation and some new additions to the command line have
+  appeared.
 
 ## 2022-01-24, Tuesday
 
@@ -208,6 +217,7 @@ Sync with all servers:
 - [x] Add Time Report for current month
 - [x] Refine onboarding with new author and new share
 - [x] Add clearing of settings command
-- [x] Fix the folder structure missing the version number according to a format spec
+- [x] Fix the folder structure missing the version number according to a format
+      spec
 
 ---

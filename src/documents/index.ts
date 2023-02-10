@@ -1,10 +1,15 @@
 import { NAMESPACE } from "../../constants.ts";
-import { Earthstar, Input, Table, Confirm } from "../../deps.ts";
+import { Confirm, Earthstar, Input, Table } from "../../deps.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 
 export const edit = async (
-  opts: { replica: Earthstar.Replica; text?: string; docPath?: string; timestamp?: string },
+  opts: {
+    replica: Earthstar.Replica;
+    text?: string;
+    docPath?: string;
+    timestamp?: string;
+  },
 ) => {
   let { replica, text, docPath, timestamp } = opts;
   let deleteAfter;
@@ -24,11 +29,13 @@ export const edit = async (
     });
   }
 
-  if (docPath.indexOf('!') !== -1) {
-    const confirmed: boolean = await Confirm.prompt("Detected a ! in the docpath. Do you want to create an ephemeral doc?");
+  if (docPath.indexOf("!") !== -1) {
+    const confirmed: boolean = await Confirm.prompt(
+      "Detected a ! in the docpath. Do you want to create an ephemeral doc?",
+    );
 
     if (!confirmed) {
-      console.log('Ok. Then please start over.');
+      console.log("Ok. Then please start over.");
       return;
     }
 
@@ -40,20 +47,22 @@ export const edit = async (
     const _date = new Date(timestamp);
 
     if (!_date) {
-      throw new Error('That is an invalid date. Sorry.');
+      throw new Error("That is an invalid date. Sorry.");
     }
 
     // time in micro seconds!
     deleteAfter = _date.getTime() * 1000;
 
-    console.log(`This document will expire after ${new Date(deleteAfter / 1000)}.`)
+    console.log(
+      `This document will expire after ${new Date(deleteAfter / 1000)}.`,
+    );
   }
 
   if (settings.author && text && docPath) {
     const result = await replica.set(settings.author, {
       path: docPath,
       text: text,
-      deleteAfter
+      deleteAfter,
     });
 
     if (Earthstar.isErr(result)) {

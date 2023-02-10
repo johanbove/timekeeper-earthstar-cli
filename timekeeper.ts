@@ -72,7 +72,12 @@ await new Command()
       const { share, action = "START", tag, comment, timestamp } = options;
       replica = await initReplica(share);
       const menuItems = setMenuItems({ settings, replica });
-      const entry: { action: string; tag?: string; comment?: string, timestamp?: Date } = {
+      const entry: {
+        action: string;
+        tag?: string;
+        comment?: string;
+        timestamp?: Date;
+      } = {
         action,
       };
       if (tag) {
@@ -82,7 +87,7 @@ await new Command()
         entry.comment = comment;
       }
       if (timestamp) {
-        entry.timestamp = new Date(timestamp)
+        entry.timestamp = new Date(timestamp);
       }
       await menuItems.addTimeEntry.action(entry);
     },
@@ -104,7 +109,12 @@ await new Command()
       const { share, action = "STOP", tag, comment, timestamp } = options;
       replica = await initReplica(share);
       const menuItems = setMenuItems({ settings, replica });
-      const entry: { action: string; tag?: string; comment?: string, timestamp?: Date } = {
+      const entry: {
+        action: string;
+        tag?: string;
+        comment?: string;
+        timestamp?: Date;
+      } = {
         action,
       };
       if (tag) {
@@ -114,7 +124,7 @@ await new Command()
         entry.comment = comment;
       }
       if (timestamp) {
-        entry.timestamp = new Date(timestamp)
+        entry.timestamp = new Date(timestamp);
       }
       await menuItems.addTimeEntry.action(entry);
     },
@@ -156,16 +166,18 @@ await new Command()
   .command("journal", "Read journal")
   .option("-e, --edit <status:string>", "Sets the journal")
   .option("-l, --limit <limit:number>", "Sets the journal")
-  .action(async (options: { share?: string; edit?: string; limit?: number }) => {
-    const { share, edit, limit } = options;
-    replica = await initReplica(share);
-    const menuItems = setMenuItems({ settings, replica });
-    if (edit?.length) {
-      await menuItems.addJournal.action(edit);
-    } else {
-      await menuItems.journal.action(limit);
-    }
-  })
+  .action(
+    async (options: { share?: string; edit?: string; limit?: number }) => {
+      const { share, edit, limit } = options;
+      replica = await initReplica(share);
+      const menuItems = setMenuItems({ settings, replica });
+      if (edit?.length) {
+        await menuItems.addJournal.action(edit);
+      } else {
+        await menuItems.journal.action(limit);
+      }
+    },
+  )
   .command("status", "Show status")
   .option("-e, --edit <status:string>", "Set the status")
   .action(async (options: { share?: string; edit?: string }) => {
