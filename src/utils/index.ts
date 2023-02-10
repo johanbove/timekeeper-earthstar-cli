@@ -1,4 +1,5 @@
 import { Earthstar } from "../../deps.ts";
+import { LOCALE, ABOUT_FOLDER, ENTRIES_FOLDER, JOURNAL_FOLDER } from "../../constants.ts";
 
 export const formatDate = (date: Date) => date.toLocaleString("default");
 
@@ -6,7 +7,7 @@ export const getDisplayName = async (
   opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica },
 ) => {
   const { settings, replica } = opts;
-  const docPath = `/about/~${settings.author?.address}/displayName`;
+  const docPath = `${ABOUT_FOLDER}~${settings.author?.address}/displayName`;
   const result = await replica.getLatestDocAtPath(docPath);
 
   if (Earthstar.isErr(result)) {
@@ -20,13 +21,13 @@ export const getDisplayName = async (
 export const getJournalMonthDocPath = () => {
   const today = new Date();
   const month = ("0" + (today.getMonth() + 1)).slice(-2);
-  return `/journal/${today.getFullYear()}-${month}`;
+  return `${JOURNAL_FOLDER}${today.getFullYear()}-${month}`;
 };
 
 export const getTimeEntriesMonthDocPath = () => {
   const today = new Date();
   const month = ("0" + (today.getMonth() + 1)).slice(-2);
-  return `/entries/${today.getFullYear()}-${month}`;
+  return `${ENTRIES_FOLDER}${today.getFullYear()}-${month}`;
 };
 
 export const welcome = async (
@@ -59,7 +60,7 @@ export const generateTimestamp = (date?: string) => {
     today = new Date(date);
   }
 
-  console.group(`Unix timestamp for ${today.toLocaleString()}`);
+  console.group(`Unix timestamp for ${today.toLocaleString(LOCALE)}`);
   console.log(today.getTime());
   console.groupEnd();
   return today.getTime();

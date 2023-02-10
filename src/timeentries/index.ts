@@ -5,7 +5,7 @@ import { COMMENTS, TAGS } from "../../constants.ts";
 import { Earthstar, Input, Select, Table } from "../../deps.ts";
 import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
-import { LOCALE} from "../../constants.ts";
+import { LOCALE, ENTRIES_FOLDER } from "../../constants.ts";
 
 export enum actions {
   START = "START",
@@ -463,7 +463,7 @@ export const timeReport = async (
 
   // checks files name is 2023-01
   const _docPath = docPath && docPath.length && docPath.indexOf("-") === 4
-    ? `/entries/${docPath}`
+    ? `${ENTRIES_FOLDER}${docPath}`
     : getTimeEntriesMonthDocPath();
 
   const result = await replica.getLatestDocAtPath(_docPath);
@@ -501,7 +501,7 @@ export const timeReport = async (
   const entries = result?.text.split(/\r?\n/).filter((element) => element);
 
   const _now = DateTime.now();
-  const today = _now.toLocaleString({
+  const today = _now.toLocaleString(LOCALE, {
     month: "long",
     day: "numeric",
     weekday: "long",

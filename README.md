@@ -27,7 +27,7 @@ being able to help each other fixing their time entries.
 Encountered some issues with syncing many files within a single folder with the
 latest version of EarthStar.
 
-The _doc_ will be stored in the path `/entries/{yyyy}-{mm}`.
+The _doc_ will be stored in the path `/timekeeper/1.0/entries/{yyyy}-{mm}`.
 
 Every month will start a new _doc_.
 
@@ -48,8 +48,8 @@ The "display name" and "status" docs can only be edited by the active author.
 
 See:
 
-- `/about/~@{authorAddress}/displayName`
-- `/about/~@{authorAddress}/status`
+- `/about/1.0/~@{authorAddress}/displayName`
+- `/about/1.0/~@{authorAddress}/status`
 
 ### Journal Entries
 
@@ -59,7 +59,7 @@ Any author can update the "journal" to allow for collaboration.
 
 Journal entries are organised in a single doc.
 
-The _doc_ will be stored in the path `/journal/{yyyy}-{mm}`.
+The _doc_ will be stored in the path `/timekeeper/1.0/journal/{yyyy}-{mm}`.
 
 Every month will start a new _doc_.
 
@@ -198,5 +198,6 @@ Sync with all servers:
 - [x] Add Time Report for current month
 - [x] Refine onboarding with new author and new share
 - [x] Add clearing of settings command
+- [ ] Fix the folder structure missing the version number
 
 ---

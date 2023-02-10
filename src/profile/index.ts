@@ -1,5 +1,5 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
-import { LOCALE} from "../../constants.ts";
+import { LOCALE, ABOUT_FOLDER } from "../../constants.ts";
 
 export const setDisplayName = async (
   opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica },
@@ -12,7 +12,7 @@ export const setDisplayName = async (
 
   if (settings.author && displayName && displayName.length) {
     const result = await replica.set(settings.author, {
-      path: `/about/~${settings.author?.address}/displayName`,
+      path: `${ABOUT_FOLDER}~${settings.author?.address}/displayName`,
       text: displayName,
     });
 
@@ -46,7 +46,7 @@ export const setStatus = async (
 
   if (settings.author && status && status.length) {
     const result = await replica.set(settings.author, {
-      path: `/about/~${settings.author?.address}/status`,
+      path: `${ABOUT_FOLDER}~${settings.author?.address}/status`,
       text: _status,
     });
 
@@ -69,7 +69,7 @@ const showAboutDoc = async (
   },
 ) => {
   const { replica, settings, docPath = "about" } = opts;
-  const _docPath = `/about/~${settings.author?.address}/${docPath}`;
+  const _docPath = `${ABOUT_FOLDER}~${settings.author?.address}/${docPath}`;
   const result = await replica.getLatestDocAtPath(_docPath);
 
   if (Earthstar.isErr(result)) {
