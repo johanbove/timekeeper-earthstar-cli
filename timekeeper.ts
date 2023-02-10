@@ -155,14 +155,15 @@ await new Command()
   )
   .command("journal", "Read journal")
   .option("-e, --edit <status:string>", "Sets the journal")
-  .action(async (options: { share?: string; edit?: string }) => {
-    const { share, edit } = options;
+  .option("-l, --limit <limit:number>", "Sets the journal")
+  .action(async (options: { share?: string; edit?: string; limit?: number }) => {
+    const { share, edit, limit } = options;
     replica = await initReplica(share);
     const menuItems = setMenuItems({ settings, replica });
     if (edit?.length) {
       await menuItems.addJournal.action(edit);
     } else {
-      await menuItems.journal.action();
+      await menuItems.journal.action(limit);
     }
   })
   .command("status", "Show status")

@@ -48,9 +48,12 @@ export const check = async (opts: { replica: Earthstar.Replica }) => {
 };
 
 export const list = async (
-  opts: { replica: Earthstar.Replica; settings: Earthstar.SharedSettings },
+  opts: { replica: Earthstar.Replica; settings: Earthstar.SharedSettings, limit?: number },
 ) => {
-  const { replica, settings } = opts;
+  const { replica, settings, limit } = opts;
+
+  const _limit = typeof limit !== 'undefined' ? limit : LIMIT;
+
   const docPath = getJournalMonthDocPath();
 
   const result = await replica.getLatestDocAtPath(docPath);
@@ -87,12 +90,12 @@ export const list = async (
   console.group(`
 Journal for ${docPath.split("/").slice(-1)}
 
-Showing ${LIMIT} of ${entries?.length} entries.
+Showing ${_limit} of ${entries?.length} entries.
 `);
 
   if (entries?.length) {
     const rows: Array<string>[] = [];
-    const _entries = entries?.slice(-LIMIT).reverse();
+    const _entries = entries?.slice(-_limit).reverse();
     _entries.forEach((entry) => {
       const _entry = entry.split(/\t/);
       rows.push([
