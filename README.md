@@ -18,6 +18,8 @@ These are copied over from
 
 ### Time Entries
 
+See [SPEC_1.0.md](./SPEC_1.0.md) for formal "timekeeper" spec.
+
 Major difference between old Timekeeper and this version is that the "Time
 Entries" will be kept in single _doc_, not separate JSON files.
 
@@ -52,6 +54,8 @@ See:
 - `/about/1.0/~@{authorAddress}/status`
 
 ### Journal Entries
+
+See [SPEC_1.0.md](./SPEC_1.0.md) for formal "timekeeper" spec.
 
 The app should allow the user to keep a journal.
 
@@ -141,6 +145,12 @@ Sync with all servers:
 
 ## Journal
 
+## 2023-02-10, Friday
+
+- Now following the correct ["about"](https://github.com/earthstar-project/application-formats/blob/main/formats/about/SPEC_1.0.md) [format spec](https://github.com/earthstar-project/application-formats).
+- Introduces the ["timekeeper" format spec version 1.0](./SPEC_1.0.md).
+- This will change the structure of your existing timekeeper data.
+
 ## 2023-02-07, Tuesday
 
 - Updates to this documentation and some new additions to the command line have appeared.
@@ -198,6 +208,6 @@ Sync with all servers:
 - [x] Add Time Report for current month
 - [x] Refine onboarding with new author and new share
 - [x] Add clearing of settings command
-- [ ] Fix the folder structure missing the version number
+- [x] Fix the folder structure missing the version number according to a format spec
 
 ---
