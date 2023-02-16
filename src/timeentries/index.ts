@@ -599,7 +599,7 @@ Statistics
     `
 Data
 
-    There were %s entries in the file: %s
+    There are %d entries in the file: %s
 `,
     timeEntries.length,
     _docPath.split("/").slice(-1),
