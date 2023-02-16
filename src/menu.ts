@@ -8,16 +8,10 @@ import {
   addTimeEntry,
   readTimeEntries,
   timeReport,
+  Entry
 } from "./timeentries/index.ts";
 
 const SEPARATOR = { name: "separator", value: "--------" };
-
-interface Entry {
-  action: string;
-  tag?: string;
-  comment?: string;
-  timestamp?: string;
-}
 
 interface SelectOptionWithAction extends SelectOption {
   name: string;
@@ -38,10 +32,21 @@ export const setMenuItems = (
     addTimeEntry: {
       name: "Track entry",
       value: "addTimeEntry",
-      action: async (entry?) =>
-        await addTimeEntry(
-          { entry, replica } as { entry?: Entry; replica: Earthstar.Replica },
-        ),
+      // @ts-ignore TS2208
+      action: async (entry?: Entry) => {
+        if (entry) {
+          await addTimeEntry(
+            { entry, replica } as {
+              entry: Entry;
+              replica: Earthstar.Replica;
+            },
+          );
+        } else {
+          await addTimeEntry(
+            { replica } as { replica: Earthstar.Replica },
+          );
+        }
+      },
     },
     timeReport: {
       name: "Time Report",
@@ -93,6 +98,7 @@ export const setMenuItems = (
     setStatus: {
       name: "Set status",
       value: "setStatus",
+      // @ts-ignore TS2322
       action: async (status?: string) =>
         await profile.setStatus({ status, settings, replica } as {
           status?: string;

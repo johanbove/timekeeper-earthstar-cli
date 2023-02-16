@@ -1,1 +1,29 @@
-{}
+{
+  "fmt": {
+    "files": {
+      "exclude": [
+        "data",
+        "zips",
+        "share_data",
+        "user_scripts"
+      ]
+    }
+  },
+  "lint": {
+    "files": {
+      "exclude": [
+        "data",
+        "zips",
+        "share_data",
+        "user_scripts"
+      ]
+    }
+  },
+  "tasks": {
+    "lint": "deno lint && deno fmt --check",
+    "fmt": "deno fmt",
+    "test": "deno test --unstable --allow-env --allow-read=./ --allow-run=deno --parallel",
+    "snapshot": "deno task test --allow-write=./ -- --update",
+    "coverage": "deno task test --coverage=./test/coverage/all/result && deno coverage --unstable --lcov ./test/coverage/all/result > ./test/coverage/all/cov.lcov"
+  }
+}

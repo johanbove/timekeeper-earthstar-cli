@@ -1,4 +1,5 @@
 // https://deno.land/manual@v1.29.4/node/npm_specifiers
+// @ts-ignore TS2305
 import { DateTime, Interval } from "npm:luxon@3";
 import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
 import { COMMENTS, TAGS } from "../../constants.ts";
@@ -54,7 +55,7 @@ interface TimeEntry {
   tag?: string;
 }
 
-interface Entry {
+export interface Entry {
   action: string;
   tag?: string;
   comment?: string;

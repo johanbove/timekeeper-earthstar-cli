@@ -1,3 +1,4 @@
+// @ts-ignore TS2305
 import { DateTime } from "npm:luxon@3";
 
 export const LOCALE = "de-DE"; // Used for date formatting

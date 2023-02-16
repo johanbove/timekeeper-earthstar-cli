@@ -31,3 +31,7 @@ zips/*
 .reminders.txt
 
 *.zip
+
+test/coverage
+test/report
+test/integration/__snapshots__
