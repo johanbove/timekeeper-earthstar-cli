@@ -151,6 +151,11 @@ Sync with all servers:
 
 ## Journal
 
+## 2023-02-16, Thursday
+
+- Introduced integration tests; figuring out how deno testing works.
+- See tasks in `deno.json`
+
 ## 2023-02-10, Friday
 
 - Now following the correct
@@ -213,7 +218,7 @@ Sync with all servers:
 - [x] Add sync with peer
 - [x] Add export to data
 - [x] Add export to zip
-- [ ] Add unit tests
+- [ ] Add integration tests
 - [x] Add Time Report for current month
 - [x] Refine onboarding with new author and new share
 - [x] Add clearing of settings command
