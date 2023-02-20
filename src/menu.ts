@@ -6,9 +6,9 @@ import * as journal from "./journal/index.ts";
 import { generateTimestamp, showSettings, welcome } from "./utils/index.ts";
 import {
   addTimeEntry,
+  Entry,
   readTimeEntries,
   timeReport,
-  Entry
 } from "./timeentries/index.ts";
 
 const SEPARATOR = { name: "separator", value: "--------" };

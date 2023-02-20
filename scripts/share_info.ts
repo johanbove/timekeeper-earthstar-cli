@@ -9,6 +9,7 @@ try {
   let latestTimestamp = 0;
 
   for (const doc of allDocs) {
+    console.log("doc", doc);
     if (doc.timestamp > latestTimestamp) {
       latestTimestamp = doc.timestamp;
     }

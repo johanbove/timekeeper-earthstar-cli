@@ -20,7 +20,7 @@ export async function runCommand(
     cmd: [
       "deno",
       "run",
-      "--unstable",
+      // "--unstable",
       "--allow-all",
       `${baseDir}/timekeeper.ts`,
       ...args,
