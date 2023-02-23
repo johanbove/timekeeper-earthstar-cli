@@ -36,14 +36,15 @@ export const setMenuItems = (
       action: async (entry?: Entry) => {
         if (entry) {
           await addTimeEntry(
-            { entry, replica } as {
+            { entry, replica, settings } as {
               entry: Entry;
               replica: Earthstar.Replica;
+              settings: Earthstar.SharedSettings;
             },
           );
         } else {
           await addTimeEntry(
-            { replica } as { replica: Earthstar.Replica },
+            { replica, settings } as { replica: Earthstar.Replica; settings: Earthstar.SharedSettings; },
           );
         }
       },
@@ -70,7 +71,7 @@ export const setMenuItems = (
       value: "addJournal",
       action: async (text?) =>
         await journal.add(
-          { text, replica } as { text?: string; replica: Earthstar.Replica },
+          { text, replica, settings } as { text?: string; replica: Earthstar.Replica, settings: Earthstar.SharedSettings },
         ),
     },
     journal: {

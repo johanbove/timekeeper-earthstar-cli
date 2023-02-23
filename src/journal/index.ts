@@ -1,14 +1,14 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
-import { getJournalMonthDocPath } from "../utils/index.ts";
+import { getJournalMonthDocPath, getJournalDocPathForauthor } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 import { LOCALE } from "../../constants.ts";
 
 const LIMIT = 5;
 
 export const add = async (
-  opts: { text?: string; replica: Earthstar.Replica },
+  opts: { text?: string; replica: Earthstar.Replica; settings: Earthstar.SharedSettings },
 ) => {
-  const { replica, text } = opts;
+  const { replica, text, settings } = opts;
 
   let _text: string | undefined = text;
 
@@ -19,9 +19,11 @@ export const add = async (
     });
   }
 
-  const docPath = getJournalMonthDocPath();
+  const docPathMonth = getJournalMonthDocPath();
+  const docPathAuthor = getJournalDocPathForauthor({ settings });
 
-  const result = await replica.getLatestDocAtPath(docPath);
+  // Check for an existing document to append to
+  const result = await replica.getLatestDocAtPath(docPathMonth);
 
   if (Earthstar.isErr(result)) {
     console.log(result.message);
@@ -29,16 +31,22 @@ export const add = async (
   }
 
   const today = new Date();
-  const textWithTimeStamp = `${today.getTime()}\t${_text}`;
+  const timestamp = today.getTime();
+  const textWithTimeStamp = `${timestamp}\t${_text}`;
 
   let appendText = textWithTimeStamp;
 
+  // Append new entry to the doc
   if (result?.text) {
     appendText = `${result.text}
 ${textWithTimeStamp}`;
   }
 
-  await edit({ replica, text: appendText, docPath });
+  // Month overview
+  await edit({ replica, text: appendText, docPath: docPathMonth });
+
+  // Create entries only for current author where each doc is an individual entry
+  await edit({ replica, text, docPath: `${docPathAuthor}/${timestamp}`});
 };
 
 export const check = async (opts: { replica: Earthstar.Replica }) => {

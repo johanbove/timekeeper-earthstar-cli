@@ -4,7 +4,7 @@ import { DateTime, Interval } from "npm:luxon@3";
 import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
 import { COMMENTS, TAGS } from "../../constants.ts";
 import { Earthstar, Input, Select, Table } from "../../deps.ts";
-import { getTimeEntriesMonthDocPath } from "../utils/index.ts";
+import { getTimeEntriesMonthDocPath, getTimeEntriesDocPathForAuthor } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 import { ENTRIES_FOLDER, LOCALE } from "../../constants.ts";
 
@@ -389,9 +389,9 @@ export const readTimeEntries = async (opts: { replica: Earthstar.Replica }) => {
 };
 
 export const addTimeEntry = async (
-  opts: { entry?: Entry; replica: Earthstar.Replica },
+  opts: { entry?: Entry; replica: Earthstar.Replica, settings: Earthstar.SharedSettings },
 ) => {
-  const { replica, entry } = opts;
+  const { replica, entry, settings } = opts;
 
   const { action, tag, comment, timestamp } = entry || {};
 
@@ -400,6 +400,7 @@ export const addTimeEntry = async (
   let _action: string | undefined = action;
   let _tag: string | undefined = tag;
   let _comment: string | undefined = comment;
+
   const _timestamp: number | undefined = timestamp
     ? timestamp.getTime()
     : today.getTime();
@@ -432,9 +433,10 @@ export const addTimeEntry = async (
     });
   }
 
-  const docPath = getTimeEntriesMonthDocPath();
+  const docPathMonth = getTimeEntriesMonthDocPath();
+  const docPathAuthor = getTimeEntriesDocPathForAuthor({ settings });
 
-  const result = await replica.getLatestDocAtPath(docPath);
+  const result = await replica.getLatestDocAtPath(docPathMonth);
 
   if (Earthstar.isErr(result)) {
     console.log(result.message);
@@ -446,7 +448,8 @@ export const addTimeEntry = async (
     return;
   }
 
-  const textWithTimeStamp = `${_timestamp}\t${_action}\t${_tag}\t${_comment}`;
+  const content = `${_action}\t${_tag}\t${_comment}`
+  const textWithTimeStamp = `${_timestamp}\t${content}`;
 
   let appendText = textWithTimeStamp;
 
@@ -455,7 +458,11 @@ export const addTimeEntry = async (
 ${textWithTimeStamp}`;
   }
 
-  await edit({ replica, text: appendText, docPath });
+  // Month overview
+  await edit({ replica, text: appendText, docPath: docPathMonth });
+
+  // Create entries only for current author where each doc is an individual entry
+  await edit({ replica, text: content, docPath: `${docPathAuthor}/${_timestamp}`});
 };
 
 export const timeReport = async (

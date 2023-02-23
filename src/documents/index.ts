@@ -76,6 +76,8 @@ export const edit = async (
   }
 };
 
+export const add = edit;
+
 export const list = async (opts: { replica: Earthstar.Replica }) => {
   const { replica } = opts;
   const allLatestDocs = await replica.getLatestDocs();
