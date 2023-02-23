@@ -6,9 +6,9 @@ import * as journal from "./journal/index.ts";
 import { generateTimestamp, showSettings, welcome } from "./utils/index.ts";
 import {
   addTimeEntry,
+  Entry,
   readTimeEntries,
   timeReport,
-  Entry
 } from "./timeentries/index.ts";
 
 const SEPARATOR = { name: "separator", value: "--------" };
@@ -44,7 +44,10 @@ export const setMenuItems = (
           );
         } else {
           await addTimeEntry(
-            { replica, settings } as { replica: Earthstar.Replica; settings: Earthstar.SharedSettings; },
+            { replica, settings } as {
+              replica: Earthstar.Replica;
+              settings: Earthstar.SharedSettings;
+            },
           );
         }
       },
@@ -71,7 +74,11 @@ export const setMenuItems = (
       value: "addJournal",
       action: async (text?) =>
         await journal.add(
-          { text, replica, settings } as { text?: string; replica: Earthstar.Replica, settings: Earthstar.SharedSettings },
+          { text, replica, settings } as {
+            text?: string;
+            replica: Earthstar.Replica;
+            settings: Earthstar.SharedSettings;
+          },
         ),
     },
     journal: {

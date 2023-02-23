@@ -4,7 +4,10 @@ import { DateTime, Interval } from "npm:luxon@3";
 import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
 import { COMMENTS, TAGS } from "../../constants.ts";
 import { Earthstar, Input, Select, Table } from "../../deps.ts";
-import { getTimeEntriesMonthDocPath, getTimeEntriesDocPathForAuthor } from "../utils/index.ts";
+import {
+  getTimeEntriesDocPathForAuthor,
+  getTimeEntriesMonthDocPath,
+} from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 import { ENTRIES_FOLDER, LOCALE } from "../../constants.ts";
 
@@ -389,7 +392,11 @@ export const readTimeEntries = async (opts: { replica: Earthstar.Replica }) => {
 };
 
 export const addTimeEntry = async (
-  opts: { entry?: Entry; replica: Earthstar.Replica, settings: Earthstar.SharedSettings },
+  opts: {
+    entry?: Entry;
+    replica: Earthstar.Replica;
+    settings: Earthstar.SharedSettings;
+  },
 ) => {
   const { replica, entry, settings } = opts;
 
@@ -448,7 +455,7 @@ export const addTimeEntry = async (
     return;
   }
 
-  const content = `${_action}\t${_tag}\t${_comment}`
+  const content = `${_action}\t${_tag}\t${_comment}`;
   const textWithTimeStamp = `${_timestamp}\t${content}`;
 
   let appendText = textWithTimeStamp;
@@ -462,7 +469,11 @@ ${textWithTimeStamp}`;
   await edit({ replica, text: appendText, docPath: docPathMonth });
 
   // Create entries only for current author where each doc is an individual entry
-  await edit({ replica, text: content, docPath: `${docPathAuthor}/${_timestamp}`});
+  await edit({
+    replica,
+    text: content,
+    docPath: `${docPathAuthor}/${_timestamp}`,
+  });
 };
 
 export const timeReport = async (

@@ -1,12 +1,19 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
-import { getJournalMonthDocPath, getJournalDocPathForauthor } from "../utils/index.ts";
+import {
+  getJournalDocPathForauthor,
+  getJournalMonthDocPath,
+} from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 import { LOCALE } from "../../constants.ts";
 
 const LIMIT = 5;
 
 export const add = async (
-  opts: { text?: string; replica: Earthstar.Replica; settings: Earthstar.SharedSettings },
+  opts: {
+    text?: string;
+    replica: Earthstar.Replica;
+    settings: Earthstar.SharedSettings;
+  },
 ) => {
   const { replica, text, settings } = opts;
 
@@ -46,7 +53,7 @@ ${textWithTimeStamp}`;
   await edit({ replica, text: appendText, docPath: docPathMonth });
 
   // Create entries only for current author where each doc is an individual entry
-  await edit({ replica, text, docPath: `${docPathAuthor}/${timestamp}`});
+  await edit({ replica, text, docPath: `${docPathAuthor}/${timestamp}` });
 };
 
 export const check = async (opts: { replica: Earthstar.Replica }) => {
