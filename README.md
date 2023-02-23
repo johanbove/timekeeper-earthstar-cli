@@ -18,16 +18,16 @@ These are copied over from
 
 ### Time Entries
 
-See [SPEC_1.0.md](./SPEC_1.0.md) for formal "timekeeper" spec.
+See [SPEC_1.1.md](./SPEC_1.1.md) for formal "timekeeper" spec.
 
-Major difference between old Timekeeper and this version is that the "Time
-Entries" will be kept in single _doc_, not separate JSON files.
+The "Time Entries" will be kept in single _doc_ for every month, next to keeping
+the entries within a author-only editable folder, where each entry will be saved
+as an individual file.
 
-Any author can edit and add to the time entries. This allows for delegation and
-being able to help each other fixing their time entries.
-
-Encountered some issues with syncing many files within a single folder with the
-latest version of EarthStar.
+Any author can edit and add to the time entries in the monthy overview. This
+allows for delegation and being able to help each other fixing their time
+entries. Making edits however will create conflicts with the author's entries
+and will have to be resolved.
 
 The _doc_ will be stored in the path `/timekeeper/1.0/entries/{yyyy}-{mm}`.
 
@@ -44,6 +44,13 @@ Each line in the path will consist of a tab separated time entry:
 | tag       | aka Project or recurring task      |
 | comment   | Short description for more context |
 
+Except for the author specific files where the _timestamp_ field will be taken
+from the doc path instead.
+
+The contents of a author-specific entry will therefor be:
+
+    {action}\t{tag}\t{comment}
+
 ### Display Name and Status
 
 The "display name" and "status" docs can only be edited by the active author.
@@ -55,13 +62,18 @@ See:
 
 ### Journal Entries
 
-See [SPEC_1.0.md](./SPEC_1.0.md) for formal "timekeeper" spec.
+See [SPEC_1.1.md](./SPEC_1.1.md) for formal "timekeeper" spec.
 
 The app should allow the user to keep a journal.
 
-Any author can update the "journal" to allow for collaboration.
+Journal entries are organised in a single doc, next to keeping the journal
+entries within a author-only editable folder, where each entry will be saved as
+an individual file.
 
-Journal entries are organised in a single doc.
+Any author can edit the "journal" to allow for collaboration. This allows for
+delegation and being able to help each other fixing their time entries. Making
+edits however will create conflicts with the author's entries and will have to
+be resolved.
 
 The _doc_ will be stored in the path `/timekeeper/1.0/journal/{yyyy}-{mm}`.
 
@@ -70,6 +82,13 @@ Every month will start a new _doc_.
 Each line in the path will consist of a tab separated time entry:
 
     {timestamp}\t{entry}
+
+Except for the author specific files where the _timestamp_ field will be taken
+from the doc path instead.
+
+The contents of a author-specific entry will therefor be:
+
+    {entry}
 
 ## Usage
 

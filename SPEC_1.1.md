@@ -36,7 +36,8 @@ The path format of a time entry document is:
 
 ### Time entries for current author
 
-The time entries will also be saved within this folder using the current's author address and will only be editable by that author.
+The time entries will also be saved within this folder using the current's
+author address and will only be editable by that author.
 
 ### Time entries document fields
 
@@ -61,7 +62,8 @@ The path format of a journal entry document is:
 
 ### Journal entries for current author
 
-The Journal entries will also be saved within this folder using the current's author address and will only be editable by that author.
+The Journal entries will also be saved within this folder using the current's
+author address and will only be editable by that author.
 
 ### Journal entries document fields
 
