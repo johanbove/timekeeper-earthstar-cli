@@ -1,4 +1,4 @@
-import { Earthstar, Select } from "../deps.ts";
+import { Earthstar, Select, Input } from "../deps.ts";
 import type { SelectOption } from "https://deno.land/x/cliffy@v0.25.7/prompt/mod.ts";
 import * as profile from "./profile/index.ts";
 import * as documents from "./documents/index.ts";
@@ -167,12 +167,17 @@ export const setMenuItems = (
     sync_dir: {
       name: "Sync dir",
       value: "sync_dir",
-      action: async () => {
-        const dirPath = "./data";
+      // @ts-ignore TS2322
+      action: async (dirPath?: string) => {
+        if (!dirPath) {
+          dirPath = await Input.prompt({
+            message: "Enter folder to sync to",
+          });
+        }
 
         await Earthstar.syncReplicaAndFsDir({
           replica,
-          dirPath,
+          dirPath: dirPath || "./data",
           keypair: settings.author as Earthstar.AuthorKeypair,
           allowDirtyDirWithoutManifest: true,
           overwriteFilesAtOwnedPaths: true,
