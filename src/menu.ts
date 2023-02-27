@@ -129,6 +129,12 @@ export const setMenuItems = (
       value: "editADocument",
       action: async () => await documents.edit({ replica }),
     },
+    editBlogPostMeta: {
+      name: "Blog: Edit meta data for a post",
+      value: "editBlogPostMeta",
+      // @ts-ignore TS2322
+      action: async (title: string, description: string ) => await documents.blogMeta({ title, replica, description } as { title: string; description?: string; replica: Earthstar.Replica }),
+    },
     readADocument: {
       name: "Read a document",
       value: "readADocument",
@@ -226,6 +232,7 @@ export const menu = async (
       menuItems.editADocument,
       menuItems.readADocument,
       menuItems.removeDocument,
+      menuItems.editBlogPostMeta,
       menuItems.listPaths,
       menuItems.listDocuments,
       SEPARATOR,
