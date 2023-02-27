@@ -1,5 +1,6 @@
 import { NAMESPACE } from "../../constants.ts";
 import { Confirm, Earthstar, Input, Table } from "../../deps.ts";
+import { stringToSlug } from "../utils/index.ts";
 
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 
@@ -9,13 +10,14 @@ export const edit = async (
     text?: string;
     docPath?: string;
     timestamp?: string;
+    attachment?: Uint8Array | ReadableStream<Uint8Array>;
   },
 ) => {
-  let { replica, text, docPath, timestamp } = opts;
+  let { replica, text, docPath, timestamp, attachment } = opts;
   let deleteAfter;
 
   const allPaths = await replica.queryPaths();
-  
+
   if (!docPath) {
     docPath = await Input.prompt({
       message: "Enter document path",
@@ -63,6 +65,7 @@ export const edit = async (
       path: docPath,
       text: text,
       deleteAfter,
+      attachment
     });
 
     if (Earthstar.isErr(result)) {
@@ -80,10 +83,15 @@ export const add = edit;
 
 /**
  * Allows to add the meta data to a blog "post.md" file.
- * @param opts 
+ * @param opts
  */
 export const blogMeta = async (
-  opts: { title: string; description?: string; replica: Earthstar.Replica, docPath?: string },
+  opts: {
+    title: string;
+    description?: string;
+    replica: Earthstar.Replica;
+    docPath?: string;
+  },
 ) => {
   const { title, description, replica, docPath } = opts;
   let _title = title;
@@ -91,13 +99,13 @@ export const blogMeta = async (
 
   const blogPostQuery = {
     filter: {
-      pathStartsWith: '/blog/1.0/'
+      pathStartsWith: "/blog/1.0/",
     },
     limit: 5,
   };
 
   const allPosts = await replica.queryPaths(blogPostQuery);
-  
+
   let text = JSON.stringify({});
   let _docPath = docPath;
 
@@ -112,10 +120,10 @@ export const blogMeta = async (
   if (!title) {
     _title = await Input.prompt({
       message: "Enter document title",
-      minLength: 1
+      minLength: 1,
     });
   }
-  
+
   if (!description) {
     _description = await Input.prompt({
       message: "Enter document description",
@@ -128,7 +136,61 @@ export const blogMeta = async (
     text = JSON.stringify({ title: _title });
   }
 
-  await edit({ text, replica, docPath: _docPath })
+  await edit({ text, replica, docPath: _docPath });
+};
+
+/**
+ * Creates a new blog post file
+ * @param opts 
+ */
+export const blogAdd = async (
+  opts: {
+    title: string;
+    description?: string;
+    replica: Earthstar.Replica;
+    docPath?: string;
+  },
+) => {
+  const { title, description, replica, docPath } = opts;
+  let _title = title;
+  let _description = description;
+
+  let text = JSON.stringify({});
+  let _docPath = docPath;
+
+  const today = new Date();
+
+  if (!title) {
+    _title = await Input.prompt({
+      message: "Enter document title",
+      minLength: 1,
+    });
+  }
+
+  const slug = stringToSlug(_title);
+  const postfolder = `${today.getFullYear()}/${("0" + (today.getMonth() + 1)).slice(-2)}/${("0" + today.getDate()).slice(-2)}`;
+
+  if (!_docPath && settings.author?.address) {
+    _docPath = `/blog/1.0/~${settings.author.address}/${postfolder}/${slug}/post.md`
+  }
+
+  if (!description) {
+    _description = await Input.prompt({
+      message: "Enter document description",
+    });
+  }
+
+  // @see https://medium.com/deno-the-complete-reference/textencoder-and-textdecoder-in-deno-cfca83be1792
+  // Cannot be totally empty!
+  const attachment = new TextEncoder().encode(_description?.length ? _description : ' ');
+
+  if (_title && _description) {
+    text = JSON.stringify({ title: _title, description: _description });
+  } else if (!_description) {
+    text = JSON.stringify({ title: _title });
+  }
+
+  await edit({ text, replica, docPath: _docPath, attachment });
 };
 
 export const list = async (opts: { replica: Earthstar.Replica }) => {
