@@ -15,17 +15,17 @@ export const edit = async (
   let deleteAfter;
 
   const allPaths = await replica.queryPaths();
-
-  if (!text) {
-    text = await Input.prompt({
-      message: "Enter document text",
-    });
-  }
-
+  
   if (!docPath) {
     docPath = await Input.prompt({
       message: "Enter document path",
       suggestions: allPaths,
+    });
+  }
+
+  if (!text) {
+    text = await Input.prompt({
+      message: "Enter document text",
     });
   }
 
@@ -77,6 +77,59 @@ export const edit = async (
 };
 
 export const add = edit;
+
+/**
+ * Allows to add the meta data to a blog "post.md" file.
+ * @param opts 
+ */
+export const blogMeta = async (
+  opts: { title: string; description?: string; replica: Earthstar.Replica, docPath?: string },
+) => {
+  const { title, description, replica, docPath } = opts;
+  let _title = title;
+  let _description = description;
+
+  const blogPostQuery = {
+    filter: {
+      pathStartsWith: '/blog/1.0/'
+    },
+    limit: 5,
+  };
+
+  const allPosts = await replica.queryPaths(blogPostQuery);
+  
+  let text = JSON.stringify({});
+  let _docPath = docPath;
+
+  if (!docPath) {
+    _docPath = await Input.prompt({
+      message: "Which blog post?",
+      minLength: 1,
+      suggestions: allPosts,
+    });
+  }
+
+  if (!title) {
+    _title = await Input.prompt({
+      message: "Enter document title",
+      minLength: 1
+    });
+  }
+  
+  if (!description) {
+    _description = await Input.prompt({
+      message: "Enter document description",
+    });
+  }
+
+  if (_title && _description) {
+    text = JSON.stringify({ title: _title, description: _description });
+  } else if (!_description) {
+    text = JSON.stringify({ title: _title });
+  }
+
+  await edit({ text, replica, docPath: _docPath })
+};
 
 export const list = async (opts: { replica: Earthstar.Replica }) => {
   const { replica } = opts;
