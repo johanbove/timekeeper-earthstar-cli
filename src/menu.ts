@@ -129,11 +129,31 @@ export const setMenuItems = (
       value: "editADocument",
       action: async () => await documents.edit({ replica }),
     },
+    addBlogPost: {
+      name: "Blog: Add a post",
+      value: "addBlogPost",
+      // @ts-ignore TS2322
+      action: async (title: string, description: string) =>
+        await documents.blogAdd(
+          { title, replica, description } as {
+            title: string;
+            description?: string;
+            replica: Earthstar.Replica;
+          },
+        ),
+    },
     editBlogPostMeta: {
       name: "Blog: Edit meta data for a post",
       value: "editBlogPostMeta",
       // @ts-ignore TS2322
-      action: async (title: string, description: string ) => await documents.blogMeta({ title, replica, description } as { title: string; description?: string; replica: Earthstar.Replica }),
+      action: async (title: string, description: string) =>
+        await documents.blogMeta(
+          { title, replica, description } as {
+            title: string;
+            description?: string;
+            replica: Earthstar.Replica;
+          },
+        ),
     },
     readADocument: {
       name: "Read a document",
@@ -232,9 +252,11 @@ export const menu = async (
       menuItems.editADocument,
       menuItems.readADocument,
       menuItems.removeDocument,
-      menuItems.editBlogPostMeta,
-      menuItems.listPaths,
       menuItems.listDocuments,
+      menuItems.listPaths,
+      SEPARATOR,
+      menuItems.addBlogPost,
+      menuItems.editBlogPostMeta,
       SEPARATOR,
       menuItems.sync_dir,
       SEPARATOR,
