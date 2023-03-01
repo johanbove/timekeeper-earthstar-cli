@@ -198,6 +198,7 @@ export const setMenuItems = (
         if (!dirPath) {
           dirPath = await Input.prompt({
             message: "Enter folder to sync to",
+            suggestions: ['./data','./space_data']
           });
         }
 
