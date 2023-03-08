@@ -1,8 +1,8 @@
 import { Earthstar } from "../deps.ts";
 import { pickShare } from "./pick_share.ts";
 
-export async function pickReplica() {
-  const shareKeypair = await pickShare();
+export async function pickReplica(settings: Earthstar.SharedSettings) {
+  const shareKeypair = await pickShare(settings);
 
   return new Earthstar.Replica({
     driver: new Earthstar.ReplicaDriverFs(

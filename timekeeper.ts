@@ -3,31 +3,30 @@ import { Command, Confirm, Earthstar } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 import { menu, setMenuItems } from "./src/menu.ts";
 
+import archiveShare from './user_scripts/scripts/archive_share.ts';
+import addShare from './user_scripts/scripts/add_share.ts';
+import newShare from './user_scripts/scripts/new_share.ts';
+import shareInfo from './user_scripts/scripts/share_info.ts';
+import setAuthor from './user_scripts/scripts/set_author.ts';
+import forgetAuthor from './user_scripts/scripts/forget_author.ts';
+import currentAuthor from './user_scripts/scripts/current_author.ts';
+import newAuthor from './user_scripts/scripts/new_author.ts';
+import addServer from './user_scripts/scripts/add_server.ts';
+import listServers from './user_scripts/scripts/list_servers.ts';
+import removeServer from './user_scripts/scripts/remove_server.ts';
+import listShares from './user_scripts/scripts/list_shares.ts';
+import syncAll from './user_scripts/scripts/sync_all.ts';
+import syncServer from './user_scripts/scripts/sync_with_server.ts';
+
+// Uses localstorage in the scope of this script
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
-
-// Checks if we have a registered author in the settings
-// if not it will complain and the user needs to run
-//  ./scripts/new_author.ts
-if (!settings.author) {
-  console.error(
-    "You can't write data without an author keypair. There isn't one saved in the settings. Create a new author or add an existing one. See scripts.",
-  );
-  Deno.exit(1);
-}
-
-if (!settings.shares?.length) {
-  console.error(
-    "Please set a share either by creating a new one or setting an existing share. See scripts.",
-  );
-  Deno.exit(1);
-}
 
 let command: string | undefined;
 let replica: Earthstar.Replica | undefined;
 
-const initReplica = async (share?: string) => {
+const initReplica = async (settings: Earthstar.SharedSettings, share?: string) => {
   if (!share) {
-    return await pickReplica();
+    return await pickReplica(settings);
   }
   const shareKeypair = { address: share, secret: settings.shareSecrets[share] };
   return new Earthstar.Replica({
@@ -51,8 +50,25 @@ await new Command()
   // Main Action generates the menu
   .action(async (options: { share?: string }) => {
     const { share } = options;
-    replica = await initReplica(share);
+
+    // Checks if we have a registered author in the settings
+    // if not it will complain and the user needs to run
+    //  ./scripts/new_author.ts
+    if (!settings.author) {
+      console.error(
+        "You can't write data without an author keypair. There isn't one saved in the settings. Create a new author or add an existing one. See scripts.",
+      );
+    }
+
+    if (!settings.shares?.length) {
+      console.error(
+        "Please set a share either by creating a new one or setting an existing share. See scripts.",
+      );
+    }
+
+    replica = await initReplica(settings, share);
     await menu({ command, settings, replica });
+
   })
   // Sub commands
   .command("start", "Start a time entry")
@@ -70,7 +86,7 @@ await new Command()
       },
     ) => {
       const { share, action = "START", tag, comment, timestamp } = options;
-      replica = await initReplica(share);
+      replica = await initReplica(settings, share);
       const menuItems = setMenuItems({ settings, replica });
       const entry: {
         action: string;
@@ -107,7 +123,7 @@ await new Command()
       },
     ) => {
       const { share, action = "STOP", tag, comment, timestamp } = options;
-      replica = await initReplica(share);
+      replica = await initReplica(settings, share);
       const menuItems = setMenuItems({ settings, replica });
       const entry: {
         action: string;
@@ -145,7 +161,7 @@ await new Command()
       },
     ) => {
       const { share, action, tag, comment, docPath } = options;
-      replica = await initReplica(share);
+      replica = await initReplica(settings, share);
       const menuItems = setMenuItems({ settings, replica });
       if (action) {
         const entry: { action: string; tag?: string; comment?: string } = {
@@ -169,7 +185,7 @@ await new Command()
   .action(
     async (options: { share?: string; edit?: string; limit?: number }) => {
       const { share, edit, limit } = options;
-      replica = await initReplica(share);
+      replica = await initReplica(settings, share);
       const menuItems = setMenuItems({ settings, replica });
       if (edit?.length) {
         await menuItems.addJournal.action(edit);
@@ -182,7 +198,7 @@ await new Command()
   .option("-e, --edit <status:string>", "Set the status")
   .action(async (options: { share?: string; edit?: string }) => {
     const { share, edit } = options;
-    replica = await initReplica(share);
+    replica = await initReplica(settings, share);
     const menuItems = setMenuItems({ settings, replica });
     if (edit?.length) {
       await menuItems.setStatus.action(edit);
@@ -194,7 +210,7 @@ await new Command()
   .option("-d, --date <date:string>", "A date in format yyyy-mm-ddThh:mm")
   .action(async (options: { share?: string; date?: string }) => {
     const { share, date } = options;
-    replica = await initReplica(share);
+    replica = await initReplica(settings, share);
     const menuItems = setMenuItems({ settings, replica });
     if (date) {
       menuItems.generateTimestamp.action(date);
@@ -205,14 +221,14 @@ await new Command()
   .command("plan", "Shows the current plan")
   .action(async (options: { share?: string }) => {
     const { share } = options;
-    replica = await initReplica(share);
+    replica = await initReplica(settings, share);
     const menuItems = setMenuItems({ settings, replica });
     await menuItems.showPlan.action();
   })
   .command("project", "Shows the current project")
   .action(async (options: { share?: string }) => {
     const { share } = options;
-    replica = await initReplica(share);
+    replica = await initReplica(settings, share);
     const menuItems = setMenuItems({ settings, replica });
     await menuItems.showProject.action();
   })
@@ -229,16 +245,75 @@ await new Command()
   .command("sync:dir", "Syncs the share contents with a local drive")
   .action(async (options: { share?: string }) => {
     const { share } = options;
-    replica = await initReplica(share);
+    replica = await initReplica(settings, share);
     const menuItems = setMenuItems({ settings, replica });
     await menuItems.sync_dir.action();
   })
+  .command("sync:server", "Sync with server")
+  .action(async () => {
+    await syncServer(settings);
+  })
+  .command("sync:all", "Syncs everything")
+  .action(async () => {
+    await syncAll(settings);
+  })
+  .command("zip", "Exports the shares content to a zip archive")
+  .action(async () => {
+    await archiveShare(settings);
+  })
+  .command("author:set", "Sets the current author")
+  .action(async () => {
+    await setAuthor(settings);
+  })
+  .command("author:new", "Creates a new author")
+  .action(async () => {
+    await newAuthor(settings);
+  })
+  .command("author:forget", "Forgets the author")
+  .action(() => {
+    forgetAuthor(settings);
+  })
+  .command("author:current", "Shows the current author")
+  .action(() => {
+    currentAuthor(settings);
+  })
+  .command("share:new", "Creates a new share")
+  .action(async () => {
+    await newShare(settings);
+  })
+  .command("share:add", "Adds a share")
+  .action(async () => {
+    await addShare(settings);
+  })
+  .command("share:list", "Lists shares")
+  .action(() => {
+    listShares(settings);
+  })
+  .command("share:info", "Show info about a share")
+  .action(async () => {
+    await shareInfo(settings);
+  })
+  .command("server:add", "Adds a server by passing the address")
+  .option("-u, --url <url:string>", "The URL to an Earthstar server")
+  .action((options: { share?: string; url?: string }) => {
+    const { url } = options;
+    if (!url || !url.length) {
+      throw new Error('Please provide a server url');
+    }
+    addServer(settings, url);
+  })
+  .command("server:list", "Lists servers")
+  .action(() => {
+    listServers(settings);
+  })
+  .command("server:remove", "Removes a server")
+  .action(async () => {
+    await removeServer(settings);
+  })
   .parse(Deno.args);
 
-if (!replica) {
-  throw new Error("Please select a replica first.");
+if (replica) {
+  await replica.close(false);
 }
-
-await replica.close(false);
 
 Deno.exit(0);
