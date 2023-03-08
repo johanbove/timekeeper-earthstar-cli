@@ -243,8 +243,8 @@ Sync with all servers:
 - [x] Add clearing of settings command
 - [x] Fix the folder structure missing the version number according to a format
       spec
-- [ ] Add functionality to create a new author key
-- [ ] Add functionality to create a new share
-- [ ] Add functionality to create a zip archive
+- [x] Add functionality to create a new author key
+- [x] Add functionality to create a new share
+- [x] Add functionality to create a zip archive
 
 ---
