@@ -2,29 +2,50 @@ import { Earthstar, Input, Table } from "../../deps.ts";
 import { ABOUT_FOLDER, LOCALE } from "../../constants.ts";
 
 export const setDisplayName = async (
-  opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica },
+  opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica, name?: string },
 ) => {
-  const { replica, settings } = opts;
+  const { replica, settings, name } = opts;
 
-  const displayName = await Input.prompt({
+  if (name) {
+    Input.inject(name);
+  }
+
+  const text = await Input.prompt({
     message: "Enter a name",
   });
 
-  if (settings.author && displayName && displayName.length) {
-    const result = await replica.set(settings.author, {
-      path: `${ABOUT_FOLDER}~${settings.author?.address}/displayName`,
-      text: displayName,
-    });
-
-    if (Earthstar.isErr(result)) {
-      console.log(result.message);
-      Deno.exit(1);
-    }
-
-    console.group("DisplayName");
-    console.log(`Hello ${displayName}`);
-    console.groupEnd();
+  if (!settings.author) {
+    throw new Error('Please define an author key pair first.');
   }
+
+  const result = await replica.set(settings.author, {
+    path: `${ABOUT_FOLDER}~${settings.author?.address}/displayName`,
+    text,
+  });
+
+  if (Earthstar.isErr(result)) {
+    throw new Error(result.message);
+  }
+
+  console.group("Displayname");
+  console.log(`${text}`);
+  console.groupEnd();
+
+  return result;
+};
+
+export const getDisplayName = async (
+  opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica },
+) => {
+  const { settings, replica } = opts;
+  const docPath = `${ABOUT_FOLDER}~${settings.author?.address}/displayName`;
+  const result = await replica.getLatestDocAtPath(docPath);
+
+  if (Earthstar.isErr(result)) {
+    throw new Error(result.message);
+  }
+
+  return result?.text ? result?.text : undefined;
 };
 
 export const setStatus = async (
@@ -36,29 +57,32 @@ export const setStatus = async (
 ) => {
   const { replica, settings, status } = opts;
 
-  let _status: string | undefined = status;
-
-  if (!status) {
-    _status = await Input.prompt({
-      message: "Enter a status",
-    });
+  if (status) {
+    Input.inject(status);
   }
 
-  if (settings.author && status && status.length) {
-    const result = await replica.set(settings.author, {
-      path: `${ABOUT_FOLDER}~${settings.author?.address}/status`,
-      text: _status,
-    });
+  const text = await Input.prompt({
+    message: "Enter a status",
+  });
 
-    if (Earthstar.isErr(result)) {
-      console.log(result.message);
-      Deno.exit(1);
-    }
-
-    console.group("Status");
-    console.log(`${status}`);
-    console.groupEnd();
+  if (!settings.author) {
+    throw new Error('Please define an author key pair first.');
   }
+
+  const result = await replica.set(settings.author, {
+    path: `${ABOUT_FOLDER}~${settings.author?.address}/status`,
+    text,
+  });
+
+  if (Earthstar.isErr(result)) {
+    throw new Error(result.message);
+  }
+
+  console.group("Status");
+  console.log(`${status}`);
+  console.groupEnd();
+
+  return result;
 };
 
 const showAboutDoc = async (
@@ -73,8 +97,7 @@ const showAboutDoc = async (
   const result = await replica.getLatestDocAtPath(_docPath);
 
   if (Earthstar.isErr(result)) {
-    console.log(result.message);
-    Deno.exit(1);
+    throw new Error(result.message);
   }
 
   console.group(docPath);
@@ -87,6 +110,8 @@ const showAboutDoc = async (
     console.log("Document not found.");
   }
   console.groupEnd();
+
+  return result;
 };
 
 export const showPlan = async (

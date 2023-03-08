@@ -1,27 +1,12 @@
 import { Earthstar } from "../../deps.ts";
 import {
-  ABOUT_FOLDER,
   ENTRIES_FOLDER,
   JOURNAL_FOLDER,
   LOCALE,
 } from "../../constants.ts";
+import { getDisplayName } from "../profile/index.ts";
 
 export const formatDate = (date: Date) => date.toLocaleString("default");
-
-export const getDisplayName = async (
-  opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica },
-) => {
-  const { settings, replica } = opts;
-  const docPath = `${ABOUT_FOLDER}~${settings.author?.address}/displayName`;
-  const result = await replica.getLatestDocAtPath(docPath);
-
-  if (Earthstar.isErr(result)) {
-    console.log(result.message);
-    Deno.exit(1);
-  }
-
-  return result?.text ? result?.text : undefined;
-};
 
 export const getJournalDocPathForauthor = (
   opts: { settings: Earthstar.SharedSettings },
