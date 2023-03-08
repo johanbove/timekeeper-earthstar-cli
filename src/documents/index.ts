@@ -65,7 +65,7 @@ export const edit = async (
       path: docPath,
       text: text,
       deleteAfter,
-      attachment
+      attachment,
     });
 
     if (Earthstar.isErr(result)) {
@@ -141,7 +141,7 @@ export const blogMeta = async (
 
 /**
  * Creates a new blog post file
- * @param opts 
+ * @param opts
  */
 export const blogAdd = async (
   opts: {
@@ -168,10 +168,13 @@ export const blogAdd = async (
   }
 
   const slug = stringToSlug(_title);
-  const postfolder = `${today.getFullYear()}/${("0" + (today.getMonth() + 1)).slice(-2)}/${("0" + today.getDate()).slice(-2)}`;
+  const postfolder = `${today.getFullYear()}/${
+    ("0" + (today.getMonth() + 1)).slice(-2)
+  }/${("0" + today.getDate()).slice(-2)}`;
 
   if (!_docPath && settings.author?.address) {
-    _docPath = `/blog/1.0/~${settings.author.address}/${postfolder}/${slug}/post.md`
+    _docPath =
+      `/blog/1.0/~${settings.author.address}/${postfolder}/${slug}/post.md`;
   }
 
   if (!description) {
@@ -182,7 +185,9 @@ export const blogAdd = async (
 
   // @see https://medium.com/deno-the-complete-reference/textencoder-and-textdecoder-in-deno-cfca83be1792
   // Cannot be totally empty!
-  const attachment = new TextEncoder().encode(_description?.length ? _description : ' ');
+  const attachment = new TextEncoder().encode(
+    _description?.length ? _description : " ",
+  );
 
   if (_title && _description) {
     text = JSON.stringify({ title: _title, description: _description });

@@ -87,14 +87,14 @@ export const generateTimestamp = (date?: string) => {
 
 /**
  * @see https://www.slingacademy.com/article/javascript-how-to-convert-a-string-to-a-url-slug/
- * @param str 
- * @returns 
+ * @param str
+ * @returns
  */
 export const stringToSlug = (str: string) => {
   return str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[\W_]+/g, '-')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\W_]+/g, "-")
     .toLowerCase()
-    .replace(/^-+|-+$/g, '');
+    .replace(/^-+|-+$/g, "");
 };

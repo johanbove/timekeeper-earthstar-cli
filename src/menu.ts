@@ -1,4 +1,4 @@
-import { Earthstar, Select, Input } from "../deps.ts";
+import { Earthstar, Input, Select } from "../deps.ts";
 import type { SelectOption } from "https://deno.land/x/cliffy@v0.25.7/prompt/mod.ts";
 import * as profile from "./profile/index.ts";
 import * as documents from "./documents/index.ts";
@@ -198,7 +198,7 @@ export const setMenuItems = (
         if (!dirPath) {
           dirPath = await Input.prompt({
             message: "Enter folder to sync to",
-            suggestions: ['./data','./space_data']
+            suggestions: ["./data", "./space_data"],
           });
         }
 

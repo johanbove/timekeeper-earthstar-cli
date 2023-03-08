@@ -3,20 +3,20 @@ import { Command, Confirm, Earthstar } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 import { menu, setMenuItems } from "./src/menu.ts";
 
-import archiveShare from './user_scripts/scripts/archive_share.ts';
-import addShare from './user_scripts/scripts/add_share.ts';
-import newShare from './user_scripts/scripts/new_share.ts';
-import shareInfo from './user_scripts/scripts/share_info.ts';
-import setAuthor from './user_scripts/scripts/set_author.ts';
-import forgetAuthor from './user_scripts/scripts/forget_author.ts';
-import currentAuthor from './user_scripts/scripts/current_author.ts';
-import newAuthor from './user_scripts/scripts/new_author.ts';
-import addServer from './user_scripts/scripts/add_server.ts';
-import listServers from './user_scripts/scripts/list_servers.ts';
-import removeServer from './user_scripts/scripts/remove_server.ts';
-import listShares from './user_scripts/scripts/list_shares.ts';
-import syncAll from './user_scripts/scripts/sync_all.ts';
-import syncServer from './user_scripts/scripts/sync_with_server.ts';
+import archiveShare from "./user_scripts/scripts/archive_share.ts";
+import addShare from "./user_scripts/scripts/add_share.ts";
+import newShare from "./user_scripts/scripts/new_share.ts";
+import shareInfo from "./user_scripts/scripts/share_info.ts";
+import setAuthor from "./user_scripts/scripts/set_author.ts";
+import forgetAuthor from "./user_scripts/scripts/forget_author.ts";
+import currentAuthor from "./user_scripts/scripts/current_author.ts";
+import newAuthor from "./user_scripts/scripts/new_author.ts";
+import addServer from "./user_scripts/scripts/add_server.ts";
+import listServers from "./user_scripts/scripts/list_servers.ts";
+import removeServer from "./user_scripts/scripts/remove_server.ts";
+import listShares from "./user_scripts/scripts/list_shares.ts";
+import syncAll from "./user_scripts/scripts/sync_all.ts";
+import syncServer from "./user_scripts/scripts/sync_with_server.ts";
 
 // Uses localstorage in the scope of this script
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
@@ -24,7 +24,10 @@ const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 let command: string | undefined;
 let replica: Earthstar.Replica | undefined;
 
-const initReplica = async (settings: Earthstar.SharedSettings, share?: string) => {
+const initReplica = async (
+  settings: Earthstar.SharedSettings,
+  share?: string,
+) => {
   if (!share) {
     return await pickReplica(settings);
   }
@@ -68,7 +71,6 @@ await new Command()
 
     replica = await initReplica(settings, share);
     await menu({ command, settings, replica });
-
   })
   // Sub commands
   .command("start", "Start a time entry")
@@ -298,7 +300,7 @@ await new Command()
   .action((options: { share?: string; url?: string }) => {
     const { url } = options;
     if (!url || !url.length) {
-      throw new Error('Please provide a server url');
+      throw new Error("Please provide a server url");
     }
     addServer(settings, url);
   })

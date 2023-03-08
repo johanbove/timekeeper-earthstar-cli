@@ -18,31 +18,29 @@ This application gives you control over an Earthstar share.
 
 > What is Earthstar? <http://earthstar-project.org>
 
-You can store any documents within the share.
+You can store any kind of doc within the share, but the main purpose is for tracking time you work on a project and tasks.
 
 This app is specifically designed to keep track of projects.
 
 When you first install the app you will need to do two things.
 
-    1. Create a new Earthstar author or enter an existing author address and secret.
+    1. Create a new Earthstar author or enter an existing author address and secret:
 
-        $ deno run -A ./scripts/new_author.ts
+        $ deno run -A ./timekeeper.ts author:set 
         
-        OR
+        OR create a new author if you don't have one yet.:
         
-        $ deno run -A ./scripts/set_author.ts
+        $ deno run -A ./timekeeper.ts author:new 
 
     2. Create a new Earthstar share or enter an existing share address and secret.
 
-        $ deno run -A ./scripts/new_share.ts
+        $ deno run -A ./timekeeper.ts share:add 
 
-        OR
+        OR create a brand new share:
 
-        $ deno run -A ./scripts/add_share.ts
+        $ deno run -A ./timekeeper.ts share:new 
 
 When you restart the app after adding your credentials and share address you will get a menu of options.
-
-See the "./scripts" folder for utility scripts that allow you to work with the Earthstar star.
 
 This application comes with absolutely no warranty! Use at your own risk.
 
