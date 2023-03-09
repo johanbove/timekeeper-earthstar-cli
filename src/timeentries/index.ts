@@ -446,7 +446,7 @@ export const addTimeEntry = async (
     Deno.exit(1);
   }
 
-  if (!action) {
+  if (!_action) {
     errored("Please define an action!");
     return;
   }

@@ -72,7 +72,7 @@ export const edit = async (
       Deno.exit(1);
     }
 
-    render(docPath, result.toString());
+    render(docPath, result);
 
     return result;
   }
