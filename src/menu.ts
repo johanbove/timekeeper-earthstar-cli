@@ -101,6 +101,7 @@ export const setMenuItems = (
     showStatus: {
       name: "Show status",
       value: "showStatus",
+      // @ts-ignore TS2322
       action: async () => await profile.showStatus({ settings, replica }),
     },
     setStatus: {
@@ -117,17 +118,19 @@ export const setMenuItems = (
     showPlan: {
       name: "Show plan",
       value: "showPlan",
+      // @ts-ignore TS2322
       action: async () => await profile.showPlan({ settings, replica }),
     },
     showProject: {
       name: "Show project",
       value: "showProject",
+      // @ts-ignore TS2322
       action: async () => await profile.showProject({ settings, replica }),
     },
     editADocument: {
       name: "Edit a document",
       value: "editADocument",
-      action: async () => await documents.edit({ replica }),
+      action: async () => await documents.edit({ settings, replica }),
     },
     addBlogPost: {
       name: "Blog: Add a post",
@@ -135,10 +138,11 @@ export const setMenuItems = (
       // @ts-ignore TS2322
       action: async (title: string, description: string) =>
         await documents.blogAdd(
-          { title, replica, description } as {
+          { title, replica, description, settings } as {
             title: string;
             description?: string;
             replica: Earthstar.Replica;
+            settings: Earthstar.SharedSettings;
           },
         ),
     },
@@ -148,10 +152,11 @@ export const setMenuItems = (
       // @ts-ignore TS2322
       action: async (title: string, description: string) =>
         await documents.blogMeta(
-          { title, replica, description } as {
+          { title, replica, description, settings } as {
             title: string;
             description?: string;
             replica: Earthstar.Replica;
+            settings: Earthstar.SharedSettings;
           },
         ),
     },
@@ -163,7 +168,7 @@ export const setMenuItems = (
     removeDocument: {
       name: "Remove a document",
       value: "removeDocument",
-      action: async () => await documents.remove({ replica }),
+      action: async () => await documents.remove({ settings, replica }),
     },
     listPaths: {
       name: "List paths",
@@ -183,6 +188,7 @@ export const setMenuItems = (
     setDisplayName: {
       name: "Set display name",
       value: "setDisplayName",
+      // @ts-ignore TS2322
       action: async () => await profile.setDisplayName({ settings, replica }),
     },
     settings: {

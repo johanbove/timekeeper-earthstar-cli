@@ -17,14 +17,14 @@ export const add = async (
 ) => {
   const { replica, text, settings } = opts;
 
-  let _text: string | undefined = text;
-
-  if (!_text) {
-    _text = await Input.prompt({
-      message: "Enter journal text",
-      minLength: 2,
-    });
+  if (text) {
+    Input.inject(text);
   }
+
+  const _text = await Input.prompt({
+    message: "Enter journal text",
+    minLength: 2,
+  });
 
   const docPathMonth = getJournalMonthDocPath();
   const docPathAuthor = getJournalDocPathForauthor({ settings });
@@ -33,7 +33,7 @@ export const add = async (
   const result = await replica.getLatestDocAtPath(docPathMonth);
 
   if (Earthstar.isErr(result)) {
-    console.log(result.message);
+    console.error(result.message);
     Deno.exit(1);
   }
 
@@ -50,16 +50,23 @@ ${textWithTimeStamp}`;
   }
 
   // Month overview
-  await edit({ replica, text: appendText, docPath: docPathMonth });
+  await edit({ settings, replica, text: appendText, docPath: docPathMonth });
 
   // Create entries only for current author where each doc is an individual entry
-  await edit({ replica, text, docPath: `${docPathAuthor}/${timestamp}` });
+  await edit({
+    settings,
+    replica,
+    text,
+    docPath: `${docPathAuthor}/${timestamp}`,
+  });
+
+  return result;
 };
 
 export const check = async (opts: { replica: Earthstar.Replica }) => {
   const { replica } = opts;
   const docPath = getJournalMonthDocPath();
-  await read({ replica, docPath });
+  return await read({ replica, docPath });
 };
 
 export const list = async (

@@ -1,19 +1,17 @@
-import { NAMESPACE } from "../../constants.ts";
 import { Confirm, Earthstar, Input, Table } from "../../deps.ts";
 import { stringToSlug } from "../utils/index.ts";
-
-const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
 
 export const edit = async (
   opts: {
     replica: Earthstar.Replica;
+    settings: Earthstar.SharedSettings;
     text?: string;
     docPath?: string;
     timestamp?: string;
     attachment?: Uint8Array | ReadableStream<Uint8Array>;
   },
 ) => {
-  let { replica, text, docPath, timestamp, attachment } = opts;
+  let { replica, text, docPath, timestamp, attachment, settings } = opts;
   let deleteAfter;
 
   const allPaths = await replica.queryPaths();
@@ -76,6 +74,8 @@ export const edit = async (
     console.group(docPath);
     console.log(result);
     console.groupEnd();
+
+    return result;
   }
 };
 
@@ -91,9 +91,10 @@ export const blogMeta = async (
     description?: string;
     replica: Earthstar.Replica;
     docPath?: string;
+    settings: Earthstar.SharedSettings;
   },
 ) => {
-  const { title, description, replica, docPath } = opts;
+  const { title, description, replica, docPath, settings } = opts;
   let _title = title;
   let _description = description;
 
@@ -136,7 +137,7 @@ export const blogMeta = async (
     text = JSON.stringify({ title: _title });
   }
 
-  await edit({ text, replica, docPath: _docPath });
+  await edit({ settings, text, replica, docPath: _docPath });
 };
 
 /**
@@ -149,9 +150,10 @@ export const blogAdd = async (
     description?: string;
     replica: Earthstar.Replica;
     docPath?: string;
+    settings: Earthstar.SharedSettings;
   },
 ) => {
-  const { title, description, replica, docPath } = opts;
+  const { title, description, replica, docPath, settings } = opts;
   let _title = title;
   let _description = description;
 
@@ -195,7 +197,7 @@ export const blogAdd = async (
     text = JSON.stringify({ title: _title });
   }
 
-  await edit({ text, replica, docPath: _docPath, attachment });
+  await edit({ settings, text, replica, docPath: _docPath, attachment });
 };
 
 export const list = async (opts: { replica: Earthstar.Replica }) => {
@@ -242,10 +244,14 @@ export const read = async (
     console.log("Document not found.");
   }
   console.groupEnd();
+
+  return result;
 };
 
-export const remove = async (opts: { replica: Earthstar.Replica }) => {
-  const { replica } = opts;
+export const remove = async (
+  opts: { replica: Earthstar.Replica; settings: Earthstar.SharedSettings },
+) => {
+  const { replica, settings } = opts;
   const allPaths = await replica.queryPaths();
 
   const docPath = await Input.prompt({

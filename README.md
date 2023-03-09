@@ -171,7 +171,8 @@ git submodule init
 git submodule update
 ```
 
-See the [official git docs on submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+See the
+[official git docs on submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
 
 ---
 

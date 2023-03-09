@@ -3,20 +3,21 @@ import {
   assertEquals,
   assertStringIncludes,
 } from "../../test/asserts.ts";
-import * as profile from "./index.ts";
+import * as journal from "./index.ts";
 import { Earthstar } from "../../deps.ts";
 import { makeReplica } from "../../test/test_utils.ts";
 
 // Use this namespace to not mess with the app's actual settings
 const NAMESPACE = "TESTING";
 
-Deno.test("profile", async (t) => {
+Deno.test("journal", async (t) => {
   const shareKeypair = await Earthstar.Crypto.generateShareKeypair(
     "testing",
   ) as Earthstar.ShareKeypair;
   const authorKeypair = await Earthstar.Crypto.generateAuthorKeypair(
     "test",
   ) as Earthstar.AuthorKeypair;
+
   const settings: Earthstar.SharedSettings = new Earthstar.SharedSettings({
     namespace: NAMESPACE,
   });
@@ -40,50 +41,38 @@ Deno.test("profile", async (t) => {
     "replica has a storageId",
   );
 
-  const expected = "Earthstar Project";
+  const expected = "Working on Earthstar Project";
 
   await t.step({
-    name: "Set display name",
+    name: "Add journal entry",
     fn: async () => {
-      const result = await profile.setDisplayName({
+      const result = await journal.add({
         settings,
         replica,
-        name: expected,
+        text: expected,
       });
       assert(Earthstar.notErr(result));
     },
   });
 
   await t.step({
-    name: "Get display name",
+    name: "Check journal",
     fn: async () => {
-      const result = await profile.getDisplayName({ settings, replica });
-      assert(Earthstar.notErr(result));
-      assertEquals(result, expected);
-    },
-  });
-
-  await t.step({
-    name: "Set status",
-    fn: async () => {
-      const expected = "Testing Profile";
-      const result = await profile.setStatus({
-        settings,
+      const result = await journal.check({
         replica,
-        status: expected,
       });
       assert(Earthstar.notErr(result));
     },
   });
 
   await t.step({
-    name: "Show status",
+    name: "List journal",
     fn: async () => {
-      const expected = "Testing Profile";
-      const result = await profile.showStatus({ settings, replica });
+      const result = await journal.list({
+        settings,
+        replica,
+      });
       assert(Earthstar.notErr(result));
-      assert(typeof result?.text, "string");
-      assertStringIncludes(result?.text as string, expected);
     },
   });
 
