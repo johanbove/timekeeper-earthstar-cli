@@ -152,21 +152,28 @@ It is now possible to call the sync right from Timekeeper itself.
 
     $ timekeeper sync:dir
 
-This will copy all files to the "./data" folder.
+This will copy all files to the "./data" folder or to a folder of your choice.
 
-### Running the user scripts
+---
 
-Sync with the local file system:
+## Getting started
 
-    deno run -A ./scripts/sync_dir.ts
+### The "user_scripts" folder is a git submodule
 
-Sync with the server:
+The "user_scripts" directory is there, but empty.
 
-    deno run -A ./scripts/sync_with_server.ts
+You must run two commands: `git submodule init` to initialize your local
+configuration file, and `git submodule update` to fetch all the data from that
+project and check out the appropriate commit listed in the superproject.
 
-Sync with all servers:
+```bash
+git submodule init
+git submodule update
+```
 
-    deno run -A ./scripts/sync_all.ts
+See the [official git docs on submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+
+---
 
 ## Journal
 
