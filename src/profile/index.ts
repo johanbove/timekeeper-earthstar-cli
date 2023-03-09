@@ -2,7 +2,11 @@ import { Earthstar, Input, Table } from "../../deps.ts";
 import { ABOUT_FOLDER, LOCALE } from "../../constants.ts";
 
 export const setDisplayName = async (
-  opts: { settings: Earthstar.SharedSettings; replica: Earthstar.Replica, name?: string },
+  opts: {
+    settings: Earthstar.SharedSettings;
+    replica: Earthstar.Replica;
+    name?: string;
+  },
 ) => {
   const { replica, settings, name } = opts;
 
@@ -15,7 +19,7 @@ export const setDisplayName = async (
   });
 
   if (!settings.author) {
-    throw new Error('Please define an author key pair first.');
+    throw new Error("Please define an author key pair first.");
   }
 
   const result = await replica.set(settings.author, {
@@ -66,7 +70,7 @@ export const setStatus = async (
   });
 
   if (!settings.author) {
-    throw new Error('Please define an author key pair first.');
+    throw new Error("Please define an author key pair first.");
   }
 
   const result = await replica.set(settings.author, {
