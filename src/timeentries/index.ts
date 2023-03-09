@@ -466,10 +466,11 @@ ${textWithTimeStamp}`;
   }
 
   // Month overview
-  await edit({ replica, text: appendText, docPath: docPathMonth });
+  await edit({ settings, replica, text: appendText, docPath: docPathMonth });
 
   // Create entries only for current author where each doc is an individual entry
   await edit({
+    settings,
     replica,
     text: content,
     docPath: `${docPathAuthor}/${_timestamp}`,

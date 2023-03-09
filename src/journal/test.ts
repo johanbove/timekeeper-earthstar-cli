@@ -1,8 +1,4 @@
-import {
-  assert,
-  assertEquals,
-  assertStringIncludes,
-} from "../../test/asserts.ts";
+import { assert, assertEquals } from "../../test/asserts.ts";
 import * as journal from "./index.ts";
 import { Earthstar } from "../../deps.ts";
 import { makeReplica } from "../../test/test_utils.ts";

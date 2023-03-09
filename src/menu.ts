@@ -73,6 +73,7 @@ export const setMenuItems = (
       name: "Edit journal",
       value: "addJournal",
       action: async (text?) =>
+        // @ts-ignore TS2322
         await journal.add(
           { text, replica, settings } as {
             text?: string;
