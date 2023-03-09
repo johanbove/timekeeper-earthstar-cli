@@ -17,6 +17,7 @@ import removeServer from "./user_scripts/scripts/remove_server.ts";
 import listShares from "./user_scripts/scripts/list_shares.ts";
 import syncAll from "./user_scripts/scripts/sync_all.ts";
 import syncServer from "./user_scripts/scripts/sync_with_server.ts";
+import { errored, respond } from "./src/utils/index.ts";
 
 // Uses localstorage in the scope of this script
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
@@ -58,13 +59,13 @@ await new Command()
     // if not it will complain and the user needs to run
     //  ./scripts/new_author.ts
     if (!settings.author) {
-      console.error(
+      errored(
         "You can't write data without an author keypair. There isn't one saved in the settings. Create a new author or add an existing one. See scripts.",
       );
     }
 
     if (!settings.shares?.length) {
-      console.error(
+      errored(
         "Please set a share either by creating a new one or setting an existing share. See scripts.",
       );
     }
@@ -240,7 +241,7 @@ await new Command()
       "Please confirm you want to remove all stored settings",
     );
     if (confirmed) {
-      console.log("Clearing settings:", settings);
+      respond("Clearing settings:", settings.toString());
       settings.clear();
     }
   })
@@ -300,7 +301,8 @@ await new Command()
   .action((options: { share?: string; url?: string }) => {
     const { url } = options;
     if (!url || !url.length) {
-      throw new Error("Please provide a server url");
+      errored("Please provide a server url");
+      Deno.exit(1);
     }
     addServer(settings, url);
   })

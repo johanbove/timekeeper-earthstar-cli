@@ -5,8 +5,10 @@ import { fromDate as DotBeatTimeFromDate } from "npm:dot-beat-time";
 import { COMMENTS, TAGS } from "../../constants.ts";
 import { Earthstar, Input, Select, Table } from "../../deps.ts";
 import {
+  errored,
   getTimeEntriesDocPathForAuthor,
   getTimeEntriesMonthDocPath,
+  log,
 } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 import { ENTRIES_FOLDER, LOCALE } from "../../constants.ts";
@@ -100,6 +102,12 @@ interface DailyFlowProps {
   currentWeekId: string;
   currentWeekNumber: number;
   parsedEntries: TimeEntry[];
+}
+
+export interface OptsWithEntry {
+  entry: Entry | undefined;
+  replica: Earthstar.Replica;
+  settings: Earthstar.SharedSettings;
 }
 
 /**
@@ -203,7 +211,6 @@ const parseTimeEntries = (
       const duration = interval.toDuration(["hours", "minutes"]);
       durationHours = duration.as("hours");
       durationMinutes = duration.as("minutes");
-      // console.log('luxon', { current, before, interval, durationHours });
       previousBeatTime = DotBeatTimeFromDate(previousEntry.timestamp);
       durationBeats = parseInt(BeatTime.slice(1), 10) -
         parseInt(previousBeatTime.slice(1), 10);
@@ -216,14 +223,9 @@ const parseTimeEntries = (
       const duration = interval.toDuration(["hours", "minutes"]);
       durationHours = duration.as("hours");
       durationMinutes = duration.as("minutes");
-      // console.log('luxon', { current, before, interval, durationHours });
     }
 
     status = action && action === "START" ? "tag is-success" : "tag is-danger";
-
-    // console.log('previousEntry', previousEntry);
-    // console.log('entry', { timestamp, action, tag, comment });
-    // console.log('nextEntry', nextEntry);
 
     if (
       action === "START" &&
@@ -347,12 +349,6 @@ const parseTimeEntries = (
     (weekId) => (weekTotalDuration += weeks[weekId].duration),
   );
 
-  // console.log('parsedEntries', parsedEntries);
-  // console.log('tags', tags);
-  // console.log('weekDays', weekDays);
-  // console.log('tagsPerWeek', tagsPerWeek);
-  // console.log('tagsPerDay', tagsPerDay);
-
   const statisticsProps: StatisticsProps = {
     currentWeekId,
     weeks,
@@ -393,7 +389,7 @@ export const readTimeEntries = async (opts: { replica: Earthstar.Replica }) => {
 
 export const addTimeEntry = async (
   opts: {
-    entry?: Entry;
+    entry: Entry | undefined;
     replica: Earthstar.Replica;
     settings: Earthstar.SharedSettings;
   },
@@ -446,12 +442,12 @@ export const addTimeEntry = async (
   const result = await replica.getLatestDocAtPath(docPathMonth);
 
   if (Earthstar.isErr(result)) {
-    console.log(result.message);
+    errored(result.message);
     Deno.exit(1);
   }
 
   if (!action) {
-    console.log("Please define an action!");
+    errored("Please define an action!");
     return;
   }
 
@@ -494,19 +490,20 @@ export const timeReport = async (
   const result = await replica.getLatestDocAtPath(_docPath);
 
   if (Earthstar.isErr(result)) {
-    console.log(result.message);
+    errored(result.message);
     Deno.exit(1);
   }
 
   // If we don't have a file, we should create it.
   if (!result) {
-    console.log(
+    log(
       `Creating new month entry for %s ...`,
       getTimeEntriesMonthDocPath(),
     );
 
     if (!settings.author) {
-      throw new Error("Please authenticate with a valid author first.");
+      errored("Please authenticate with a valid author first.");
+      Deno.exit(1);
     }
 
     const create = await replica.set(
@@ -518,7 +515,7 @@ export const timeReport = async (
     );
 
     if (Earthstar.isErr(create)) {
-      console.log(create.message);
+      errored(create.message);
       Deno.exit(1);
     }
   }
@@ -536,7 +533,7 @@ export const timeReport = async (
   const currentWeekNumber = _now.weekNumber;
   const currentYear = _now.year;
 
-  console.log(
+  log(
     `
 Today is %s. We are in week %s of the year %s.
 `,
@@ -576,12 +573,8 @@ Today is %s. We are in week %s of the year %s.
         ..._entry.slice(1),
       ]);
     });
-
-    // const table: Table = Table.from(rows);
-    // console.log(table.toString());
   }
 
-  // console.log('_data', _data);
   const parsedEntries = parseTimeEntries(
     _data as EntryData,
     currentWeekNumber,
@@ -595,23 +588,121 @@ This Week (%s)
     parsedEntries?.thisWeekReportProps.currentWeekId,
   );
 
-  // console.log('thisWeekReportProps', parsedEntries);
   console.log("tagsPerDay", parsedEntries?.thisWeekReportProps.tagsPerDay);
-  console.log("weekDays", parsedEntries?.thisWeekReportProps.weekDays);
-  console.log("tags", parsedEntries?.thisWeekReportProps.tags);
+
+  console.group(`
+Daily entries for week ${currentWeekNumber} of the year ${currentYear}
+    `);
+
+  const timeWeeks: Array<string | number>[] = [];
+
+  const DAYSOFTHEWEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  if (parsedEntries?.thisWeekReportProps?.weekDays) {
+    DAYSOFTHEWEEK.forEach((day) => {
+      Object.keys(parsedEntries.thisWeekReportProps.weekDays).forEach(
+        (weekDay) => {
+          const timeEntryTag =
+            parsedEntries.thisWeekReportProps.weekDays[weekDay];
+          if (weekDay === `${currentYear % 100}/${currentWeekNumber}/${day}`) {
+            timeWeeks.push([day, timeEntryTag.duration.toFixed(2)]);
+          }
+        },
+      );
+    });
+  }
+
+  new Table()
+    .header(["Day", "Duration"])
+    .border(true)
+    .body(timeWeeks)
+    .render();
+
+  console.groupEnd();
+
+  const timeTags: Array<string | number>[] = [];
+
+  if (parsedEntries?.thisWeekReportProps?.tags) {
+    Object.keys(parsedEntries.thisWeekReportProps.tags).forEach((tag) => {
+      const timeEntryTag = parsedEntries.thisWeekReportProps.tags[tag];
+      timeTags.push([tag, timeEntryTag.duration.toFixed(2)]);
+    });
+  }
+
+  console.group(`
+Tags
+  `);
+
+  new Table()
+    .header(["Tag", "Duration"])
+    .border(true)
+    .body(timeTags)
+    .render();
+
   console.groupEnd();
 
   console.group(`
 Statistics
 `);
-  // console.log('parseTimeEntries', parsedEntries);
-  console.log("weeks", parsedEntries?.statisticsProps.weeks);
-  console.log(
-    "totalHours",
-    parsedEntries?.statisticsProps.totalHours.toFixed(2),
+
+  const weekDurations: Array<number | string>[] = [];
+
+  if (parsedEntries?.statisticsProps.weeks) {
+    Object.keys(parsedEntries?.statisticsProps.weeks).forEach((week) => {
+      weekDurations.push([
+        week,
+        parsedEntries?.statisticsProps.weeks[week]["duration"].toFixed(2),
+      ]);
+    });
+  }
+
+  console.group(`
+Weeks
+  `);
+
+  new Table()
+    .header(["Week", "Duration"])
+    .border(true)
+    .body(weekDurations)
+    .render();
+
+  console.groupEnd();
+
+  console.group(`
+Total Hours
+    `);
+
+  log(
+    'All', parsedEntries?.statisticsProps.totalHours.toFixed(2),
   );
-  console.log("days", parsedEntries?.statisticsProps.days);
-  console.log(HR);
+
+  log(
+    'Tagged', parsedEntries?.statisticsProps.tagsTotalDuration.toFixed(2),
+  );
+
+  console.groupEnd();
+
+  console.group(`
+Days
+    `);
+
+  const dayDurations: Array<number | string>[] = [];
+
+  if (parsedEntries?.statisticsProps.days) {
+    Object.keys(parsedEntries?.statisticsProps.days).forEach((date) => {
+      dayDurations.push([
+        date,
+        parsedEntries?.statisticsProps.days[date].duration.toFixed(2),
+      ]);
+    });
+  }
+
+  new Table()
+    .header(["Date", "Duration"])
+    .border(true)
+    .body(dayDurations)
+    .render();
+
   console.groupEnd();
 
   console.group(

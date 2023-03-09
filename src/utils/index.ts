@@ -37,20 +37,18 @@ export const welcome = async (
   const displayName = await getDisplayName({ settings, replica });
 
   if (displayName) {
-    console.log(`
+    respond(`
 Welcome back ${displayName} 👋
     `);
   } else {
-    console.log(`
+    respond(`
 Hello 👋
         `);
   }
 };
 
 export const showSettings = (settings: Earthstar.SharedSettings) => {
-  console.group("SETTINGS");
-  console.log("settings", settings);
-  console.groupEnd();
+  render("SETTINGS", settings);
 };
 
 export const generateTimestamp = (date?: string) => {
@@ -60,9 +58,8 @@ export const generateTimestamp = (date?: string) => {
     today = new Date(date);
   }
 
-  console.group(`Unix timestamp for ${today.toLocaleString(LOCALE)}`);
-  console.log(today.getTime());
-  console.groupEnd();
+  render(`Unix timestamp for ${today.toLocaleString(LOCALE)}`, today.getTime());
+
   return today.getTime();
 };
 
@@ -78,4 +75,28 @@ export const stringToSlug = (str: string) => {
     .replace(/[\W_]+/g, "-")
     .toLowerCase()
     .replace(/^-+|-+$/g, "");
+};
+
+/**
+ * Wrapper over console.log
+ * @param text
+ */
+export const log = <T>(...args: T[]) => {
+  console.log.apply(console, args);
+};
+
+export const respond = log;
+
+/**
+ * Wrapper over console.error
+ * @param text
+ */
+export const errored = <T>(...args: T[]) => {
+  console.error.apply(console, args);
+};
+
+export const render = <T, K>(title: T, content: K) => {
+  console.group(title);
+  respond<K>(content);
+  console.groupEnd();
 };

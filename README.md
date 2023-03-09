@@ -238,14 +238,14 @@ See the
 - [ ] Create command delete time entry
 - [ ] Create command edit time entry
 - [ ] Create command filter time entry by week
-- [ ] Create command summary of total hours worked by tag
-- [ ] Create command summary of total hours worked by tag and per week
+- [x] Create report total hours worked by tag
+- [ ] Create report summary of total hours worked by tag and per week
 - [x] Add [cliffy "command"](https://cliffy.io/docs@v0.25.7/command) for
       command-line actions
 - [x] Add sync with peer
 - [x] Add export to data
 - [x] Add export to zip
-- [ ] Add integration tests
+- [x] Add integration tests
 - [x] Add Time Report for current month
 - [x] Refine onboarding with new author and new share
 - [x] Add clearing of settings command

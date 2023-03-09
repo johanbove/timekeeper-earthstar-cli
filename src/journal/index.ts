@@ -1,7 +1,10 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
 import {
+  errored,
   getJournalDocPathForauthor,
   getJournalMonthDocPath,
+  log,
+  respond,
 } from "../utils/index.ts";
 import { edit, read } from "../documents/index.ts";
 import { LOCALE } from "../../constants.ts";
@@ -33,7 +36,7 @@ export const add = async (
   const result = await replica.getLatestDocAtPath(docPathMonth);
 
   if (Earthstar.isErr(result)) {
-    console.error(result.message);
+    errored(result.message);
     Deno.exit(1);
   }
 
@@ -85,15 +88,16 @@ export const list = async (
   const result = await replica.getLatestDocAtPath(docPath);
 
   if (Earthstar.isErr(result)) {
-    console.log(result.message);
+    errored(result.message);
     Deno.exit(1);
   }
 
   if (!result) {
-    console.log(`Creating new month entry for ${getJournalMonthDocPath()}...`);
+    respond(`Creating new month entry for ${getJournalMonthDocPath()}...`);
 
     if (!settings.author) {
-      throw new Error("Please authenticate with a valid author first.");
+      errored("Please authenticate with a valid author first.");
+      Deno.exit(1);
     }
 
     const create = await replica.set(
@@ -105,7 +109,7 @@ export const list = async (
     );
 
     if (Earthstar.isErr(create)) {
-      console.log(create.message);
+      errored(create.message);
       Deno.exit(1);
     }
   }
@@ -132,9 +136,9 @@ Showing ${_limit} of ${entries?.length} entries.
 
     const table: Table = Table.from(rows);
 
-    console.log(table.toString());
+    log(table.toString());
   } else {
-    console.log("Document not found.");
+    errored("Document not found.");
   }
   console.groupEnd();
 };

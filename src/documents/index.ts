@@ -1,5 +1,5 @@
 import { Confirm, Earthstar, Input, Table } from "../../deps.ts";
-import { stringToSlug } from "../utils/index.ts";
+import { errored, log, render, respond, stringToSlug } from "../utils/index.ts";
 
 export const edit = async (
   opts: {
@@ -35,7 +35,7 @@ export const edit = async (
     );
 
     if (!confirmed) {
-      console.log("Ok. Then please start over.");
+      respond("Ok. Then please start over.");
       return;
     }
 
@@ -47,13 +47,14 @@ export const edit = async (
     const _date = new Date(timestamp);
 
     if (!_date) {
-      throw new Error("That is an invalid date. Sorry.");
+      errored("That is an invalid date. Enter a date like YYYY-MM-DDTHH:MM:SS");
+      Deno.exit(1);
     }
 
     // time in micro seconds!
     deleteAfter = _date.getTime() * 1000;
 
-    console.log(
+    respond(
       `This document will expire after ${new Date(deleteAfter / 1000)}.`,
     );
   }
@@ -67,13 +68,11 @@ export const edit = async (
     });
 
     if (Earthstar.isErr(result)) {
-      console.log(result.message);
+      errored(result.message);
       Deno.exit(1);
     }
 
-    console.group(docPath);
-    console.log(result);
-    console.groupEnd();
+    render(docPath, result.toString());
 
     return result;
   }
@@ -203,9 +202,7 @@ export const blogAdd = async (
 export const list = async (opts: { replica: Earthstar.Replica }) => {
   const { replica } = opts;
   const allLatestDocs = await replica.getLatestDocs();
-  console.group(`Found ${allLatestDocs.length} docs`);
-  console.log(allLatestDocs);
-  console.groupEnd();
+  render(`Found ${allLatestDocs.length} docs`, allLatestDocs);
 };
 
 export const read = async (
@@ -226,7 +223,7 @@ export const read = async (
   const result = await replica.getLatestDocAtPath(docPath);
 
   if (Earthstar.isErr(result)) {
-    console.log(result.message);
+    errored(result.message);
     Deno.exit(1);
   }
 
@@ -239,9 +236,9 @@ export const read = async (
         result?.text,
       ],
     );
-    console.log(table.toString());
+    log(table.toString());
   } else {
-    console.log("Document not found.");
+    errored("Document not found.");
   }
   console.groupEnd();
 
@@ -263,13 +260,11 @@ export const remove = async (
     const result = await replica.wipeDocAtPath(settings.author, docPath);
 
     if (Earthstar.isErr(result)) {
-      console.log(result.message);
+      errored(result.message);
       Deno.exit(1);
     }
 
-    console.group(`Wiped ${docPath}`);
-    console.log(result);
-    console.groupEnd();
+    render(`Wiped ${docPath}`, result);
   }
 };
 
@@ -280,7 +275,7 @@ export const paths = async (opts: { replica: Earthstar.Replica }) => {
   console.group(`Found ${allPaths.length} paths`);
 
   for (const path of allPaths) {
-    console.log(path);
+    log(path);
   }
 
   console.groupEnd();

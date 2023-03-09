@@ -3,7 +3,13 @@ import type { SelectOption } from "https://deno.land/x/cliffy@v0.25.7/prompt/mod
 import * as profile from "./profile/index.ts";
 import * as documents from "./documents/index.ts";
 import * as journal from "./journal/index.ts";
-import { generateTimestamp, showSettings, welcome } from "./utils/index.ts";
+import {
+  errored,
+  generateTimestamp,
+  respond,
+  showSettings,
+  welcome,
+} from "./utils/index.ts";
 import {
   addTimeEntry,
   Entry,
@@ -16,7 +22,22 @@ const SEPARATOR = { name: "separator", value: "--------" };
 interface SelectOptionWithAction extends SelectOption {
   name: string;
   value: string;
-  action: <T>(opts?: T) => void | Promise<T | void> | T | number;
+  action: <T>(
+    opts?: T | string,
+  ) =>
+    | void
+    | Entry
+    | T
+    | number
+    | string
+    | Promise<
+      | T
+      | Entry
+      | Earthstar.DocEs5
+      | Earthstar.IngestEvent<Earthstar.DocEs5>
+      | void
+      | string
+    >;
 }
 
 type SelectOptionWithoutAction = Omit<SelectOptionWithAction, "action">;
@@ -32,7 +53,6 @@ export const setMenuItems = (
     addTimeEntry: {
       name: "Track entry",
       value: "addTimeEntry",
-      // @ts-ignore TS2208
       action: async (entry?: Entry) => {
         if (entry) {
           await addTimeEntry(
@@ -42,16 +62,18 @@ export const setMenuItems = (
               settings: Earthstar.SharedSettings;
             },
           );
+          // No entry
         } else {
           await addTimeEntry(
             { replica, settings } as {
+              entry: undefined;
               replica: Earthstar.Replica;
               settings: Earthstar.SharedSettings;
             },
           );
         }
       },
-    },
+    } as SelectOptionWithAction,
     timeReport: {
       name: "Time Report",
       value: "timeReport",
@@ -73,7 +95,6 @@ export const setMenuItems = (
       name: "Edit journal",
       value: "addJournal",
       action: async (text?) =>
-        // @ts-ignore TS2322
         await journal.add(
           { text, replica, settings } as {
             text?: string;
@@ -102,30 +123,26 @@ export const setMenuItems = (
     showStatus: {
       name: "Show status",
       value: "showStatus",
-      // @ts-ignore TS2322
       action: async () => await profile.showStatus({ settings, replica }),
     },
     setStatus: {
       name: "Set status",
       value: "setStatus",
-      // @ts-ignore TS2322
       action: async (status?: string) =>
         await profile.setStatus({ status, settings, replica } as {
           status?: string;
           settings: Earthstar.SharedSettings;
           replica: Earthstar.Replica;
         }),
-    },
+    } as SelectOptionWithAction,
     showPlan: {
       name: "Show plan",
       value: "showPlan",
-      // @ts-ignore TS2322
       action: async () => await profile.showPlan({ settings, replica }),
     },
     showProject: {
       name: "Show project",
       value: "showProject",
-      // @ts-ignore TS2322
       action: async () => await profile.showProject({ settings, replica }),
     },
     editADocument: {
@@ -136,7 +153,6 @@ export const setMenuItems = (
     addBlogPost: {
       name: "Blog: Add a post",
       value: "addBlogPost",
-      // @ts-ignore TS2322
       action: async (title: string, description: string) =>
         await documents.blogAdd(
           { title, replica, description, settings } as {
@@ -146,11 +162,10 @@ export const setMenuItems = (
             settings: Earthstar.SharedSettings;
           },
         ),
-    },
+    } as SelectOptionWithAction,
     editBlogPostMeta: {
       name: "Blog: Edit meta data for a post",
       value: "editBlogPostMeta",
-      // @ts-ignore TS2322
       action: async (title: string, description: string) =>
         await documents.blogMeta(
           { title, replica, description, settings } as {
@@ -160,7 +175,7 @@ export const setMenuItems = (
             settings: Earthstar.SharedSettings;
           },
         ),
-    },
+    } as SelectOptionWithAction,
     readADocument: {
       name: "Read a document",
       value: "readADocument",
@@ -189,7 +204,6 @@ export const setMenuItems = (
     setDisplayName: {
       name: "Set display name",
       value: "setDisplayName",
-      // @ts-ignore TS2322
       action: async () => await profile.setDisplayName({ settings, replica }),
     },
     settings: {
@@ -200,7 +214,6 @@ export const setMenuItems = (
     sync_dir: {
       name: "Sync dir",
       value: "sync_dir",
-      // @ts-ignore TS2322
       action: async (dirPath?: string) => {
         if (!dirPath) {
           dirPath = await Input.prompt({
@@ -217,9 +230,9 @@ export const setMenuItems = (
           overwriteFilesAtOwnedPaths: true,
         });
 
-        console.log(`Synced ${replica.share} with ${dirPath}`);
+        respond(`Synced ${replica.share} with ${dirPath}`);
       },
-    },
+    } as SelectOptionWithAction,
   };
 };
 
@@ -299,6 +312,7 @@ export const menu = async (
     const menuItem = menuItems[action];
     await menuItem.action();
   } else {
-    throw new Error("Invalid command passed.");
+    errored("Invalid command passed.");
+    Deno.exit(1);
   }
 };

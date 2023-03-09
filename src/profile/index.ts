@@ -1,5 +1,6 @@
 import { Earthstar, Input, Table } from "../../deps.ts";
 import { ABOUT_FOLDER, LOCALE } from "../../constants.ts";
+import { errored, log, render } from "../utils/index.ts";
 
 export const setDisplayName = async (
   opts: {
@@ -19,7 +20,8 @@ export const setDisplayName = async (
   });
 
   if (!settings.author) {
-    throw new Error("Please define an author key pair first.");
+    errored("Please define an author key pair first.");
+    Deno.exit(1);
   }
 
   const result = await replica.set(settings.author, {
@@ -28,12 +30,11 @@ export const setDisplayName = async (
   });
 
   if (Earthstar.isErr(result)) {
-    throw new Error(result.message);
+    errored(result.message);
+    Deno.exit(1);
   }
 
-  console.group("Displayname");
-  console.log(`${text}`);
-  console.groupEnd();
+  render("Displayname", `${text}`);
 
   return result;
 };
@@ -46,7 +47,7 @@ export const getDisplayName = async (
   const result = await replica.getLatestDocAtPath(docPath);
 
   if (Earthstar.isErr(result)) {
-    throw new Error(result.message);
+    errored(result.message);
   }
 
   return result?.text ? result?.text : undefined;
@@ -70,7 +71,8 @@ export const setStatus = async (
   });
 
   if (!settings.author) {
-    throw new Error("Please define an author key pair first.");
+    errored("Please define an author key pair first.");
+    Deno.exit(1);
   }
 
   const result = await replica.set(settings.author, {
@@ -79,12 +81,11 @@ export const setStatus = async (
   });
 
   if (Earthstar.isErr(result)) {
-    throw new Error(result.message);
+    errored(result.message);
+    Deno.exit(1);
   }
 
-  console.group("Status");
-  console.log(`${status}`);
-  console.groupEnd();
+  render("Status", `${status}`);
 
   return result;
 };
@@ -101,7 +102,7 @@ const showAboutDoc = async (
   const result = await replica.getLatestDocAtPath(_docPath);
 
   if (Earthstar.isErr(result)) {
-    throw new Error(result.message);
+    errored(result.message);
   }
 
   console.group(docPath);
@@ -109,9 +110,9 @@ const showAboutDoc = async (
     const table: Table = new Table(
       [new Date(result?.timestamp / 1000).toLocaleString(LOCALE), result?.text],
     );
-    console.log(table.toString());
+    log(table.toString());
   } else {
-    console.log("Document not found.");
+    errored("Document not found.");
   }
   console.groupEnd();
 
