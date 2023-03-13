@@ -1,4 +1,5 @@
 export * as Earthstar from "https://deno.land/x/earthstar@v10.0.2/mod.ts";
+// export * as Earthstar from "/Users/jbove/Dev/EarthstarProject/earthstar/mod.ts";
 
 export {
   Confirm,

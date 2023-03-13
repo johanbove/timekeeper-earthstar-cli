@@ -3,6 +3,10 @@ import { Command, Confirm, Earthstar } from "./deps.ts";
 import { pickReplica } from "./helpers/pick_replica.ts";
 import { menu, setMenuItems } from "./src/menu.ts";
 
+import { errored, respond } from "./src/utils/index.ts";
+
+import { list as sequenceList, add as sequenceAdd } from "./src/sequence/index.ts";
+
 import archiveShare from "./user_scripts/scripts/archive_share.ts";
 import addShare from "./user_scripts/scripts/add_share.ts";
 import newShare from "./user_scripts/scripts/new_share.ts";
@@ -17,7 +21,6 @@ import removeServer from "./user_scripts/scripts/remove_server.ts";
 import listShares from "./user_scripts/scripts/list_shares.ts";
 import syncAll from "./user_scripts/scripts/sync_all.ts";
 import syncServer from "./user_scripts/scripts/sync_with_server.ts";
-import { errored, respond } from "./src/utils/index.ts";
 
 // Uses localstorage in the scope of this script
 const settings = new Earthstar.SharedSettings({ namespace: NAMESPACE });
@@ -313,6 +316,22 @@ await new Command()
   .command("server:remove", "Removes a server")
   .action(async () => {
     await removeServer(settings);
+  })
+  .command("logger", "Logger")
+  .option("-t, --text [text:string]", "Adds a log entry")
+  .option("-l, --log [log:string]", "Which log to edit?")
+  .action(async (options: { share?: string; text?: true | string | undefined; log?: true | string | undefined }) => {
+    const { share, text, log = '0' } = options;
+    replica = await initReplica(settings, share);
+    if (text && typeof text === 'string') {
+      await sequenceAdd({ text, replica, settings });
+    } else if (log && typeof log === 'string') {
+      await sequenceList({
+        replica,
+        limit: 100,
+        log
+      });
+    }
   })
   .parse(Deno.args);
 
